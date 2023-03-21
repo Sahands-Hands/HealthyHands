@@ -1,0 +1,94 @@
+﻿@page "/user"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using HealthyHands.Shared.Models
+
+@attribute [Authorize]
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>User Info</PageTitle>
+
+<h1>Info</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (user == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Height</th>
+                <th>Gender</th>
+                <th>Activity Level</th>
+                <th>Birthdate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.Height</td>
+                <td>@user.Gender</td>
+                <td>@user.ActivityLevel</td>
+                <td>@user.BirthDay.ToString()</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@*@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}*@
+
+@code {
+    private UserDto? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+        if (UserAuth is not null && UserAuth.IsAuthenticated)
+        {
+            try
+            {
+                user = await Http.GetFromJsonAsync<UserDto>("User/UserInfo");
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }  
+        }
+    }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+     
+    //        try
+    //        {
+    //            user = await Http.GetFromJsonAsync<UserDto>("User/UserInfo");
+    //        }
+    //        catch (AccessTokenNotAvailableException exception)
+    //        {
+    //            exception.Redirect();
+    //        }  
+
+    //}
+}
