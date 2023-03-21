@@ -14,7 +14,7 @@ namespace HealthyHands.Shared.Models
         public int Intensity { get; set; }
         public int Length { get; set; }
         public DateTime WorkoutDate { get; set; }
-        public int CaloriesBurned { get; set; }
+        public int? CaloriesBurned { get; set; }
 
     }
 }
