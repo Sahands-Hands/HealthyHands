@@ -10,6 +10,7 @@ namespace HealthyHands.Shared.Models
     {
         public string UserMealId { get; set; }
         public string MealName { get; set; }
+        public DateTime MealDate { get; set; }
         public int? Calories { get; set; }
         public int? Protein { get; set; }
         public int? Carbs { get; set; }

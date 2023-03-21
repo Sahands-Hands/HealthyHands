@@ -13,7 +13,6 @@ namespace HealthyHands.Server.Models
         public int? Gender { get; set; }
         public int? ActivityLevel { get; set; }
         public DateTime? BirthDay { get; set; }
-        // public UserDemographics? UserDemographics { get; set; } = null;
         public List<UserWeight> UserWeights { get; set; } = new List<UserWeight>();
         public List<UserMeal> UserMeals { get; set; } = new List<UserMeal>();
         public List<UserWorkout> UserWorkouts { get; set; } = new List<UserWorkout>();

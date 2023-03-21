@@ -1,5 +1,4 @@
 using HealthyHands.Server.Data;
-using HealthyHands.Server.Data.Seed;
 using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
