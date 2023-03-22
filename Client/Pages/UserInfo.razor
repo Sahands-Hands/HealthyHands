@@ -69,7 +69,7 @@ else
         {
             try
             {
-                user = await Http.GetFromJsonAsync<UserDto>("User/UserInfo");
+                user = await Http.GetFromJsonAsync<UserDto>("user");
             }
             catch (AccessTokenNotAvailableException exception)
             {
