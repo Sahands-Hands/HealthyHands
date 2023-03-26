@@ -1,5 +1,4 @@
 using HealthyHands.Shared;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyHands.Server.Controllers

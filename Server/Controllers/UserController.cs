@@ -35,12 +35,12 @@ namespace HealthyHands.Server.Controllers
         //    var user = await _userManager.FindByNameAsync(id);
         //    return View(user);
         //}
-        
+
         [HttpGet]
         [Route("UserInfo")]
         public async Task<ActionResult<UserDto>> UserInfo()
         {
-            var user = await _context.Users.Select(u => 
+            var user = await _context.Users.Select(u =>
                 new UserDto
                 {
                     Id = u.Id,
