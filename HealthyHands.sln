@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthyHands.Client", "Clie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthyHands.Shared", "Shared\HealthyHands.Shared.csproj", "{452A3BC4-10CC-49C8-8980-026DDDF8F5D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthyHands.Test", "HealthyHands.Test\HealthyHands.Test.csproj", "{0A532672-3CE4-4C74-97BA-6ACC856AA095}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthyHands.Tests", "Test\HealthyHands.Tests.csproj", "{95029EC7-C109-4872-B3DC-5E63F035FA84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{452A3BC4-10CC-49C8-8980-026DDDF8F5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{452A3BC4-10CC-49C8-8980-026DDDF8F5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{452A3BC4-10CC-49C8-8980-026DDDF8F5D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A532672-3CE4-4C74-97BA-6ACC856AA095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A532672-3CE4-4C74-97BA-6ACC856AA095}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A532672-3CE4-4C74-97BA-6ACC856AA095}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A532672-3CE4-4C74-97BA-6ACC856AA095}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95029EC7-C109-4872-B3DC-5E63F035FA84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95029EC7-C109-4872-B3DC-5E63F035FA84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95029EC7-C109-4872-B3DC-5E63F035FA84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95029EC7-C109-4872-B3DC-5E63F035FA84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
