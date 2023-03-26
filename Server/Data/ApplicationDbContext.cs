@@ -3,8 +3,6 @@ using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using HealthyHands.Shared.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace HealthyHands.Server.Data
 {

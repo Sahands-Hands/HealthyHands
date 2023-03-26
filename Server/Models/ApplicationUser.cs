@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using HealthyHands.Shared.Models;
+﻿using HealthyHands.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HealthyHands.Server.Models
