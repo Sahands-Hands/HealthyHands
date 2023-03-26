@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace HealthyHands.Server.Controllers
 {
     [Authorize]
-    [Route("[controller]")]
+    [Route("user")]
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,22 +22,8 @@ namespace HealthyHands.Server.Controllers
             _userManager = userManager;
         }
 
-        [Route("")]
-        [Route("Index")]
-        public IActionResult Index()
-        {
-            return Ok();
-        }
-
-        //[HttpGet]
-        //public async Task<ActionResult> Get(string id)
-        //{
-        //    var user = await _userManager.FindByNameAsync(id);
-        //    return View(user);
-        //}
-
         [HttpGet]
-        [Route("UserInfo")]
+        [Route("")]
         public async Task<ActionResult<UserDto>> UserInfo()
         {
             var user = await _context.Users.Select(u =>
@@ -53,14 +39,40 @@ namespace HealthyHands.Server.Controllers
                     BirthDay = u.BirthDay,
                 }).FirstOrDefaultAsync(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            Console.WriteLine("UserDto object: {0}", user);
-
             if (user == null)
             {
                 return NotFound();
             }
 
             return Ok(user);
+        }
+
+        [HttpPut]
+        [Route("update")]
+
+        public async Task<ActionResult> UpdateUserInfo([FromBody] UserDto userDto)
+        {
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if ((user == null) || (userDto.Id != user.Id))
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                user.Height = userDto.Height;
+                user.Gender = userDto.Gender;
+                user.ActivityLevel = userDto.ActivityLevel;
+
+                await _userManager.UpdateAsync(user);
+            }
+            catch
+            {
+                Response.StatusCode = 400;
+                return Content("Error updating user info");
+            }
+            
+            return Ok();
         }
     }
 }
