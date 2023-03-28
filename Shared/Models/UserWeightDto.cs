@@ -16,7 +16,6 @@ namespace HealthyHands.Shared.Models
         /// <summary>
         /// Gets or sets the user weight id.
         /// </summary>
-        /// 
         public string UserWeightId { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets the weight.
