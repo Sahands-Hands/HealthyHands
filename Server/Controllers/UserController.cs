@@ -71,6 +71,9 @@ namespace HealthyHands.Server.Controllers
         /// <returns><see cref="OkResult"/> upon success, otherwise <see cref="ContentResult"/> with <see cref="NotFoundObjectResult"/> and error description</returns>
         [HttpPut]
         [Route("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateUserInfo([FromBody] UserDto userDto)
         {
             var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -91,8 +94,7 @@ namespace HealthyHands.Server.Controllers
             }
             catch
             {
-                Response.StatusCode = 400;
-                return Content("Error updating user info");
+                return BadRequest();
             }
             
             return Ok();
