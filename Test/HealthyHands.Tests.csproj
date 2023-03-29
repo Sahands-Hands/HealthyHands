@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="3.2.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="NUnit" Version="3.13.3" />
@@ -30,7 +31,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ClientTests\HttpRepository\" />
 	  <Folder Include="ServerTests\Controllers\" />
 	  <Folder Include="ServerTests\Data\Helpers\" />
 	  <Folder Include="ServerTests\Helpers\" />
