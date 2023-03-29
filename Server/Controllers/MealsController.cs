@@ -139,13 +139,13 @@ namespace HealthyHands.Server.Controllers
             UserMeal meal = new UserMeal
             {
                 UserMealId = mealDto.UserMealId,
-                MealName = mealDto.MealName;
-                MealDate = mealDto.MealDate;
-                Calories = mealDto.Calories;
-                Protein = mealDto.Protein;
-                Carbs = mealDto.Carbs;
-                Fat = mealDto.Fat;
-                Sugar = mealDto.Sugar;
+                MealName = mealDto.MealName,
+                MealDate = mealDto.MealDate,
+                Calories = mealDto.Calories,
+                Protein = mealDto.Protein,
+                Carbs = mealDto.Carbs,
+                Fat = mealDto.Fat,
+                Sugar = mealDto.Sugar,
                 ApplicationUserId = userId    // Use the current user's Id!!!
             };
 

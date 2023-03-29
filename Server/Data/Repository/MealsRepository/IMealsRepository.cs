@@ -45,7 +45,7 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// Updates the user meal.
         /// </summary>
         /// <param name="userMeal">The user meal.</param>
-        void UpdateUserMeal(UserWeight userMeal);
+        void UpdateUserMeal(UserMeal userMeal);
 
         /// <summary>
         /// Deletes the user meal.

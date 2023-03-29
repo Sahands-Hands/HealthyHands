@@ -101,7 +101,7 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
             mealToUpdate.Fat = userMeal.Fat;
             mealToUpdate.Sugar = userMeal.Sugar;
 
-            _context.Update(weightToUpdate);
+            _context.Update(mealToUpdate);
         }
 
         /// <summary>
