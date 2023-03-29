@@ -19,7 +19,7 @@ namespace HealthyHands.Server.Controllers
     [Route("meals")]
     public class MealsController : Controller
     {
-        private readonly IMealsRepository _meaalsRepository;
+        private readonly IMealsRepository _mealsRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MealsController"/> class.
