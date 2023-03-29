@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HealthyHands.Client.Pages;
+using HealthyHands.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthyHands.Server.Models
@@ -55,6 +57,20 @@ namespace HealthyHands.Server.Models
                 RoleId = roles.First(q => q.Name == "Admin").Id
             });
             builder.Entity<IdentityUserRole<string>>().HasData(userRoles);
+
+            ////Seed Workouts
+            //List<UserWorkout> workouts = new List<UserWorkout>()
+            //{
+            //    new UserWorkout { 
+            //        UserWorkoutId = "test1",
+            //        WorkoutName = "Cardio",
+            //        WorkoutType = 1,
+            //        Intensity = 1,
+            //        Length = 20,
+            //        WorkoutDate = DateTime.Now,
+                
+            //    }
+            //}; builder.Entity<UserWorkout>().HasData(workouts);
         }
     }
 }

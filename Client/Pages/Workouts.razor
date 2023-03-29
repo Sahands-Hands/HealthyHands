@@ -1,0 +1,40 @@
+﻿@page "/userworkouts"
+
+<PageTitle>Workouts</PageTitle>
+
+<h1>Workouts</h1>
+
+@if(User == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Workout Name</th>
+				<th>Workout Type</th>
+				<th>Intensity</th>
+				<th>Length</th>
+				<th>Workout Date</th>				
+				<th>Calories Burned</th>
+			</tr>
+		</thead>
+		@foreach (var UserWorkout in User.UserWorkouts)
+		{
+			<tbody>
+				<tr>
+					<td>@UserWorkout.WorkoutName</td>
+					<td>@UserWorkout.WorkoutType</td>
+					<td>@UserWorkout.Intensity</td>
+					<td>@UserWorkout.Length</td>
+					<td>@UserWorkout.WorkoutDate</td>
+					<td>@UserWorkout.CaloriesBurned</td>
+				</tr>
+			</tbody>
+		}
+		<!-- <button class="button" @onclick="UpdateWorkouts()">Add Workout</button> -->
+		
+	</table>
+}
