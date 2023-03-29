@@ -10,5 +10,6 @@
         public int? Carbs { get; set; }
         public int? Fat { get; set; }
         public int? Sugar { get; set; }
+        public string ApplicationUserId { get; set; } = string.Empty;
     }
 }
