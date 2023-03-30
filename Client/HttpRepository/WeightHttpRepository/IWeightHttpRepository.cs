@@ -6,11 +6,11 @@ public interface IWeightHttpRepository
 
     Task<UserDto> GetWeightsByWeightDate();
 
-    Task AddWeight(UserWeightDto userWeightDto);
+    Task<bool> AddWeight(UserWeightDto userWeightDto);
 
-    Task UpdateWeight(UserWeightDto userWeightDto);
+    Task<bool> UpdateWeight(UserWeightDto userWeightDto);
 
-    Task DeleteWeight(UserWeightDto userWeightDto);
+    Task<bool> DeleteWeight(UserWeightDto userWeightDto);
 
 
 }

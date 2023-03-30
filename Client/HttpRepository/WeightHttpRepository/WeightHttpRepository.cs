@@ -14,9 +14,9 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         ///  Gets the user weights.
         /// </summary>
         /// <returns></returns>
-        public async Task<UserDto> GetWeights() 
+        public async Task<UserDto> GetWeights()
         {
-            UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("weights"); 
+            UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("weights");
             return user;
         }
 
@@ -24,7 +24,7 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         ///  Gets the user weights by date.
         /// </summary>
         /// <returns></returns>
-        public async Task<UserDto> GetWeightsByWeightDate() 
+        public async Task<UserDto> GetWeightsByWeightDate()
         {
             UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("weights/byDate/{date:string}");
             return user;
@@ -38,10 +38,17 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// </summary>
         /// <param name="userWeightDto"></param>
         /// <returns></returns>
-        public async Task AddWeight(UserWeightDto userWeightDto) // rename to AddWeight()
+        public async Task<bool> AddWeight(UserWeightDto userWeightDto)
         {
-            var response = await _httpClient.PutAsJsonAsync("weights/add", userWeightDto); // route is "weights/add"
-           
+            var response = await _httpClient.PutAsJsonAsync("weights/add", userWeightDto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+            return true;
+
+
         }
 
         /// <summary>
@@ -49,21 +56,32 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// </summary>
         /// <param name="userWeightDto"></param>
         /// <returns></returns>
-        public async Task UpdateWeight(UserWeightDto userWeightDto)
+        public async Task<bool> UpdateWeight(UserWeightDto userWeightDto)
         {
 
-            var response = await _httpClient.PutAsJsonAsync("weights/update", userWeightDto); // route is "weights/update"
-            
+            var response = await _httpClient.PutAsJsonAsync("weights/update", userWeightDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+            return true;
+
         }
         /// <summary>
         /// Deletes user Weight
         /// </summary>
         /// <param name="userWeightDto"></param>
         /// <returns></returns>
-        public async Task DeleteWeight(UserWeightDto UserWeightId) 
+        public async Task<bool> DeleteWeight(UserWeightDto UserWeightId)
         {
 
-            var response = await _httpClient.PutAsJsonAsync("weights/delete/{userWeightId:string}", UserWeightId); 
+            var response = await _httpClient.PutAsJsonAsync("weights/delete/{userWeightId:string}", UserWeightId);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+
+            }
+            return true;
 
         }
 
