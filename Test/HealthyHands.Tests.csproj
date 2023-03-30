@@ -30,7 +30,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ClientTests\HttpRepository\" />
 	  <Folder Include="ServerTests\Controllers\" />
 	  <Folder Include="ServerTests\Data\Helpers\" />
 	  <Folder Include="ServerTests\Helpers\" />
