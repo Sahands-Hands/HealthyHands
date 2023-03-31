@@ -158,7 +158,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="userWeightId">The user weight id.</param>
         /// <returns>An Http Status Code</returns>
         [HttpDelete]
-        [Route("delete")]
+        [Route("delete/{userWeightId}")]
         public async Task<ActionResult> DeleteWeight(string userWeightId)
         {
             UserWeight weightToDelete = _weightsRepository.GetUserWeightByUserWeightId(userWeightId);

@@ -1,8 +1,19 @@
 ﻿@page "/userweights"
+@using Radzen.Blazor
 
 <PageTitle>Weights</PageTitle>
 
 <h1>Weights</h1>
+<label for="weight">Weight:</label>
+<input id="weight" type="number" @bind="newWeight" />
+
+<label for="weightDate">Date:</label>
+<input id="weightDate" type="date" @bind="newWeightDate" />
+
+<label for="weight">Weight:</label>
+<button @onclick="() => AddWeight() ">Add</button>
+
+
 
 @if (User == null)
 {
@@ -26,11 +37,17 @@ else
                 <tr>
                     <td>@weight.WeightDate</td>
                     <td>@weight.Weight</td>
-
+                    <td><button @onclick="() => Delete(weight.UserWeightId)">Delete</button></td>
+                   
                 </tr>
+               
             </tbody>
             }
-        
+        <RadzenChart>
+        <RadzenLineSeries Data="@User.UserWeights"
+                      CategoryProperty="WeightDate"
+                      ValueProperty="Weight"    />
+    </RadzenChart>
     </table>
 }
 
