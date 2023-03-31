@@ -10,17 +10,17 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Moq.Contrib.HttpClient;
 
 namespace HealthyHands.Tests
 {
     public class WeightHttpRepositoryTests
     {
         [Fact]
-
         public async Task GetWeights_ReturnsExpectedResult()
         { // Arrange
 
-            var expectedResult = new UserDto
+            var testUserDto = new UserDto
             {
                 Id = "",
                 UserWeights = new List<UserWeight>
@@ -32,32 +32,24 @@ namespace HealthyHands.Tests
             WeightDate = new DateTime(2022, 1, 1),
             ApplicationUserId = "123"
         },
-        // add more UserWeight objects here if necessary
+
     }
             };
 
-            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-            httpMessageHandlerMock.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonSerializer.Serialize(expectedResult))
-                });
-            var httpClient = new HttpClient(httpMessageHandlerMock.Object);
-            httpClient.BaseAddress = new Uri("https://localhost:7255");
-            var weightHttpRepository = new WeightHttpRepository(httpClient);
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var client = handlerMock.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7255/");
+            handlerMock.SetupRequest(HttpMethod.Get, "https://localhost:7255/weights").ReturnsJsonResponse<UserDto>(HttpStatusCode.OK, testUserDto);
+
+            var weightHttpRepository = new WeightHttpRepository(client);
+
             // Act
             var result = await weightHttpRepository.GetWeights();
             // Assert
 
-            var obj1Str = JsonSerializer.Serialize(expectedResult);
+            var obj1Str = JsonSerializer.Serialize(testUserDto);
             var obj2Str = JsonSerializer.Serialize(result);
-
             Assert.Equal(obj1Str, obj2Str);
-
-
-
 
         }
 
@@ -65,10 +57,8 @@ namespace HealthyHands.Tests
         public async Task GetWeightsByWeightDate_ReturnsExpectedResult()
         {
             // Arrange
-            var expectedResult = new UserDto
+            var testUserDto = new UserDto
             {
-                // add properties and values here to represent the expected result
-
                 Id = "",
                 UserWeights = new List<UserWeight>
                     {
@@ -80,67 +70,86 @@ namespace HealthyHands.Tests
                             WeightDate = new DateTime(2022, 1, 1),
                             ApplicationUserId = "123"
                         },
-
-
                     }
             };
 
-            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-            httpMessageHandlerMock.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonSerializer.Serialize(expectedResult))
-                });
 
-            var httpClient = new HttpClient(httpMessageHandlerMock.Object);
-            httpClient.BaseAddress = new Uri(" https://localhost:7255");
-            var weightHttpRepository = new WeightHttpRepository(httpClient);
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var client = handlerMock.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7255");
+            handlerMock.SetupRequest(HttpMethod.Get, "https://localhost:7255/weights/byDate/{date:string}").ReturnsJsonResponse<UserDto>(HttpStatusCode.OK, testUserDto);
+
+            var weightHttpRepository = new WeightHttpRepository(client);
+
 
             // Act
             var result = await weightHttpRepository.GetWeightsByWeightDate();
 
             // Assert
-            var obj1Str = JsonSerializer.Serialize(expectedResult);
+            var obj1Str = JsonSerializer.Serialize(testUserDto);
             var obj2Str = JsonSerializer.Serialize(result);
-
             Assert.Equal(obj1Str, obj2Str);
-
-
         }
         [Fact]
         public async Task AddWeight_ReturnsTrue_WhenSuccessful()
         {
             // Arrange
-            var userWeightDto = new UserWeightDto
+            var testUserDto = new UserWeightDto
             {
-                // add properties and values here to represent the weight data being added
+                Weight = 70.5,
+                WeightDate = new DateTime(2022, 1, 1),
+                ApplicationUserId = "123"
+            };
 
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var client = handlerMock.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7255");
+            handlerMock.SetupRequest(HttpMethod.Put, "https://localhost:7255/weights/add").ReturnsJsonResponse(HttpStatusCode.OK);
+            var weightHttpRepository = new WeightHttpRepository(client);
+
+            // Act
+            var result = await weightHttpRepository.AddWeight(testUserDto);
+
+            // Assert
+            Assert.True(result);
+        }
+
+
+        [Fact]
+        public async Task UpdateWeight_ReturnsTrue_WhenSuccessful()
+        {
+            // Arrange
+            var testUserDto = new UserWeightDto
+            {
                 Weight = 70.5,
                 WeightDate = new DateTime(2022, 1, 1),
                 ApplicationUserId = "123"
 
-
-
-
             };
-
-            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-            httpMessageHandlerMock.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK
-                });
-
-            var httpClient = new HttpClient(httpMessageHandlerMock.Object);
-            httpClient.BaseAddress = new Uri(" https://localhost:7255");
-            var weightHttpRepository = new WeightHttpRepository(httpClient);
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var client = handlerMock.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7255");
+            handlerMock.SetupRequest(HttpMethod.Put, "https://localhost:7255/weights/update").ReturnsJsonResponse(HttpStatusCode.OK);
+            var weightHttpRepository = new WeightHttpRepository(client);
 
             // Act
-            var result = await weightHttpRepository.AddWeight(userWeightDto);
+            var result = await weightHttpRepository.UpdateWeight(testUserDto);
+            // Assert
+            Assert.True(result);
+        }
 
+        [Fact]
+        public async Task DeleteWeight_ReturnsTrue_WhenSuccessful()
+        {
+            // Arrange
+            string userWeightId = "someID";
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var client = handlerMock.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:7255");
+            handlerMock.SetupRequest(HttpMethod.Delete, $"https://localhost:7255/weights/delete/{userWeightId}").ReturnsJsonResponse(HttpStatusCode.OK);
+            var weightHttpRepository = new WeightHttpRepository(client);
+            // Act
+            var result = await weightHttpRepository.DeleteWeight(userWeightId);
             // Assert
             Assert.True(result);
         }

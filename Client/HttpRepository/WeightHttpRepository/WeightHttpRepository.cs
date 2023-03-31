@@ -72,16 +72,11 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// </summary>
         /// <param name="userWeightDto"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteWeight(UserWeightDto UserWeightId)
+        public async Task<bool> DeleteWeight(string userWeightId)
         {
 
-            var response = await _httpClient.PutAsJsonAsync("weights/delete/{userWeightId:string}", UserWeightId);
-            if (!response.IsSuccessStatusCode)
-            {
-                return false;
-
-            }
-            return true;
+            var response = await _httpClient.DeleteAsync($"weights/delete/{userWeightId}");
+            return response.IsSuccessStatusCode;
 
         }
 

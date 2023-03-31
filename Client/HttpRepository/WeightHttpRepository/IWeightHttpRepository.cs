@@ -10,7 +10,7 @@ public interface IWeightHttpRepository
 
     Task<bool> UpdateWeight(UserWeightDto userWeightDto);
 
-    Task<bool> DeleteWeight(UserWeightDto userWeightDto);
+    Task<bool> DeleteWeight(string userWeightDto);
 
 
 }
