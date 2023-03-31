@@ -35,6 +35,8 @@ namespace HealthyHands.Shared.Models
         /// Gets or sets the activity level.
         /// </summary>
         public int? ActivityLevel { get; set; }
+        
+        public int? WeightGoal { get; set; }
         /// <summary>
         /// Gets or sets the daily calorie goal
         /// </summary>

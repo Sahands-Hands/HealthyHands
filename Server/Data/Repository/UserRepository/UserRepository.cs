@@ -44,6 +44,7 @@ public class UserRepository : IUserRepository
             Height = u.Height,
             Gender = u.Gender,
             ActivityLevel = u.ActivityLevel,
+            WeightGoal = u.WeightGoal,
             CalorieGoal = u.CalorieGoal,
             BirthDay = u.BirthDay,
         }).FirstOrDefaultAsync(u => u.Id == userId);
@@ -66,6 +67,7 @@ public class UserRepository : IUserRepository
         userToUpdate.Height = userDto.Height;
         userToUpdate.Gender = userDto.Gender;
         userToUpdate.ActivityLevel = userDto.ActivityLevel;
+        userToUpdate.WeightGoal = userDto.WeightGoal;
         userToUpdate.CalorieGoal = userDto.CalorieGoal;
         userToUpdate.BirthDay = userDto.BirthDay;
 
