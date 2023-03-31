@@ -32,13 +32,13 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoWithAllWorkouts(string userId)
+        public async Task<UserDto> GetUserDtoWithAllWorkouts(string userId)
         {
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 UserWorkouts = u.UserWorkouts
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             return user;
         }
@@ -49,16 +49,15 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="workoutDate">The workout date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoByWorkoutDate(string userId, string workoutDate)
+        public async Task<UserDto> GetUserDtoByWorkoutDate(string userId, string workoutDate)
         {
-            DateTime workoutDateTime;
-            DateTime.TryParse(workoutDate, out workoutDateTime);
+            var workoutDateTime = DateTime.Parse(workoutDate);
 
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 UserWorkouts = u.UserWorkouts
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             user.UserWorkouts = user.UserWorkouts.Where(u => u.WorkoutDate.Date == workoutDateTime.Date).Select(w => w).ToList();
 
@@ -70,9 +69,10 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// </summary>
         /// <param name="userWorkoutId">The user workout id.</param>
         /// <returns>A <see cref="UserWorkout"/>.</returns>
-        public UserWorkout GetUserWorkoutByUserWorkoutId(string userWorkoutId)
+        public async Task<UserWorkout> GetUserWorkoutByUserWorkoutId(string userWorkoutId)
         {
-            var workout = _context.UserWorkouts.Select(w => w).FirstOrDefault(w => w.UserWorkoutId == userWorkoutId);
+            var workout = await _context.UserWorkouts.Select(w => w).FirstOrDefaultAsync(w => w.UserWorkoutId == userWorkoutId);
+            
             return workout;
         }
 
@@ -80,18 +80,18 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// Adds the user workout.
         /// </summary>
         /// <param name="userWorkout">The user workout.</param>
-        public void AddUserWorkout(UserWorkout userWorkout)
+        public async Task AddUserWorkout(UserWorkout userWorkout)
         {
-            _context.UserWorkouts.AddAsync(userWorkout);
+            await _context.UserWorkouts.AddAsync(userWorkout);
         }
 
         /// <summary>
         /// Updates the user workout.
         /// </summary>
         /// <param name="userWorkout">The user workout.</param>
-        public void UpdateUserWorkout(UserWorkout userWorkout)
+        public async Task UpdateUserWorkout(UserWorkout userWorkout)
         {
-            var workoutToUpdate = _context.UserWorkouts.Select(w => w).FirstOrDefault(w => w.UserWorkoutId == userWorkout.UserWorkoutId && w.ApplicationUserId == userWorkout.ApplicationUserId);
+            var workoutToUpdate = await  _context.UserWorkouts.Select(w => w).FirstOrDefaultAsync(w => w.UserWorkoutId == userWorkout.UserWorkoutId && w.ApplicationUserId == userWorkout.ApplicationUserId);
             
             workoutToUpdate.WorkoutName = userWorkout.WorkoutName;
             workoutToUpdate.WorkoutType = userWorkout.WorkoutType;
@@ -107,10 +107,10 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// Deletes the user workout.
         /// </summary>
         /// <param name="userWorkoutId">The user workout id.</param>
-        public void DeleteUserWorkout(string userWorkoutId)
+        public async Task DeleteUserWorkout(string userWorkoutId)
         {
-            var userWorkoutToRemove = _context.UserWorkouts.Select(w => w)
-                .FirstOrDefault(w => w.UserWorkoutId == userWorkoutId);
+            var userWorkoutToRemove = await _context.UserWorkouts.Select(w => w)
+                .FirstOrDefaultAsync(w => w.UserWorkoutId == userWorkoutId);
             if (userWorkoutToRemove != null)
             {
                 _context.UserWorkouts.Remove(userWorkoutToRemove);
@@ -120,9 +120,9 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// <summary>
         /// Saves changes made to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        public void Save()
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private bool _disposed = false;

@@ -21,20 +21,20 @@ else
 				<th>Calories Burned</th>
 			</tr>
 		</thead>
-		@foreach (var UserWorkout in User.UserWorkouts)
+		@foreach (var u in User.UserWorkouts)
 		{
 			<tbody>
 				<tr>
-					<td>@UserWorkout.WorkoutName</td>
-					<td>@UserWorkout.WorkoutType</td>
-					<td>@UserWorkout.Intensity</td>
-					<td>@UserWorkout.Length</td>
-					<td>@UserWorkout.WorkoutDate</td>
-					<td>@UserWorkout.CaloriesBurned</td>
+					<td>@u.WorkoutName</td>
+					<td>@u.WorkoutType</td>
+					<td>@u.Intensity</td>
+					<td>@u.Length</td>
+					<td>@u.WorkoutDate</td>
+					<td>@u.CaloriesBurned</td>
 				</tr>
 			</tbody>
 		}
-		<!-- <button class="button" @onclick="UpdateWorkouts()">Add Workout</button> -->
+		@* <!-- <button class="button" @onclick="UpdateWorkouts()">Add Workout</button> --> *@
 		
 	</table>
 }
