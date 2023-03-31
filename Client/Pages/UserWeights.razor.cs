@@ -12,16 +12,22 @@ namespace HealthyHands.Client.Pages
     {
         [Inject]
         public HttpClient _HttpClient { get; set; } = new();
+       
 
         [Inject]
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
         [Inject]
         public IWeightHttpRepository WeightHttpRepository { get; set; }
-       
+        [Inject]
+        public NavigationManager navigationManager { get; set; }
+        public UserWeightDto UserWeightDto { get; set; } = new();
         public UserDto User { get; set; } = new();
 
-        protected async Task OnInitializedAsync()
+       
+
+       
+        protected override async Task OnInitializedAsync()
         {
             var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
             if (UserAuth is not null && UserAuth.IsAuthenticated)
@@ -36,5 +42,13 @@ namespace HealthyHands.Client.Pages
                 }
             }
         }
+
+
+
+        
+
+
+
+
     }
 }

@@ -1,0 +1,46 @@
+﻿@page "/userweights"
+
+<PageTitle>Weights</PageTitle>
+
+<h1>Weights</h1>
+
+@if (User == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+                <th> Date </th>
+                <th>Weight</th>
+      
+</tr>
+
+</thead>
+       
+            @foreach (var weight in User.UserWeights)
+            {
+            <tbody>
+                <tr>
+                    <td>@weight.WeightDate</td>
+                    <td>@weight.Weight</td>
+
+                </tr>
+            </tbody>
+            }
+        
+    </table>
+}
+
+
+
+
+
+
+
+
+
+
+

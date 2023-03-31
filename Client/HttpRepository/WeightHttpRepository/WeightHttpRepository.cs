@@ -32,7 +32,6 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         }
 
 
-
         /// <summary>
         ///  Adds Users weight
         /// </summary>
@@ -47,7 +46,6 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
                 return false;
             }
             return true;
-
 
         }
 
