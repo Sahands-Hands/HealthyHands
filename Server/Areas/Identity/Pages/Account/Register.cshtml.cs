@@ -19,6 +19,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.Net.Mail;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using System.Security.Claims;
+using NuGet.Protocol.Plugins;
 
 namespace HealthyHands.Server.Areas.Identity.Pages.Account
 {
@@ -99,9 +104,52 @@ namespace HealthyHands.Server.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            /// <summary>
+            /// First Name field on Register page, max character length 15 and it is required
+            /// </summary>
             [Required]
+            [StringLength(15, ErrorMessage = "Name must be under 15 characters")]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
+
+            /// <summary>
+            /// Last Name field on Register page, max character length is 20 and it is required
+            /// </summary>
+            [Required]
+            [StringLength(20, ErrorMessage = "Must be under 20 characters")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            /// <summary>
+            /// Height field on Register page, must be between 1 and 99 inches and it is required
+            /// </summary>
+            [Required]
+            [RegularExpression(@"^[1-9][0-9]?((?<=6)[0-9])?$", ErrorMessage = "Please Enter correct height")]
+            [Display(Name = "Height(in)")]
+            public int Height { get; set; }
+
+            /// <summary>
+            /// Gender Field on Register page, must be either 0 (Male) or 1 (Female) and it is required
+            /// </summary>
+            [Required(ErrorMessage = "Please select a gender")]
+            [Display(Name = "Gender")]
+            public int Gender { get; set; }
+
+            /// <summary>
+            /// Activity Level field on Register page, must be between 0 and 2 (Low, Avg, High Activity) and it is required
+            /// </summary>
+            [Required(ErrorMessage = "Please select activity")]
+            [Display(Name = "Activity Level")]
+            public int ActivityLevel { get; set; }
+
+            /// <summary>
+            /// Birthday field on Register page, must be a valid date and it is required using custom attribut NotTodayOrFuture
+            /// </summary>
+            [Required]
+            [DataType(DataType.Date)]
+            [NotTodayOrFuture(ErrorMessage = "Please enter a valid date")]
+            [Display(Name = "Birthday")]
+            public DateTime BirthDay { get; set; }
         }
 
 
@@ -117,8 +165,17 @@ namespace HealthyHands.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
+               
+                var user = new ApplicationUser
+                {
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    Height = Input.Height,
+                    Gender = Input.Gender,
+                    ActivityLevel = Input.ActivityLevel,
+                    BirthDay = Input.BirthDay
+                };
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -148,17 +205,21 @@ namespace HealthyHands.Server.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
+                    
                 }
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-            }
 
-            // If we got this far, something failed, redisplay form
+            }
+            //If we got this far, something failed, redisplay form
             return Page();
+
+
         }
 
+        
         private ApplicationUser CreateUser()
         {
             try
@@ -182,4 +243,18 @@ namespace HealthyHands.Server.Areas.Identity.Pages.Account
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
+    /// <summary>
+    /// Custome Attribute for validating date is not today or future so that user can't enter todays date or future date
+    /// </summary>
+    public class NotTodayOrFutureAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            DateTime date = (DateTime)value;
+            return date < DateTime.Today;
+        }
+    }
+
+    
+
 }
