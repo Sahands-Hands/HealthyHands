@@ -1,4 +1,6 @@
-﻿using HealthyHands.Shared.Models;
+﻿//Filename: IUserHttpRepository.cs
+
+using HealthyHands.Shared.Models;
 namespace HealthyHands.Client.HttpRepository.UserRepository
 {
     /// <summary>
@@ -7,7 +9,17 @@ namespace HealthyHands.Client.HttpRepository.UserRepository
     /// </summary>
     public interface IUserHttpRepository
     {
+        /// <summary>
+        /// Gets the user info.
+        /// </summary>
+        /// <returns>A Task.</returns>
         Task<UserDto> GetUserInfo();
-        Task UpdateUserInfo(UserDto userDto);
+
+        /// <summary>
+        /// Updates the user info.
+        /// </summary>
+        /// <param name="userDto">The user dto.</param>
+        /// <returns>A Task.</returns>
+        Task<bool> UpdateUserInfo(UserDto userDto);
     }
 }

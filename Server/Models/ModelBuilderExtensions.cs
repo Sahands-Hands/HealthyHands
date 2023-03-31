@@ -10,16 +10,14 @@ namespace HealthyHands.Server.Models
         /// </summary>
         /// <param name="builder">The builder.</param>
         public static void Seed(this ModelBuilder builder)
-        {             
-            // Seed Roles
-            List<IdentityRole> roles = new List<IdentityRole>()
+        { 
+            List<IdentityRole> roles = new List<IdentityRole>()
             {
                 new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
                 new IdentityRole { Name = "User", NormalizedName = "USER" }
             }; builder.Entity<IdentityRole>().HasData(roles);
-
-            // Seed Users
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
             string userName = "test@example.com";
             string adminUserName = "admin@example.com";
             List<ApplicationUser> users = new List<ApplicationUser>()
@@ -46,9 +44,9 @@ namespace HealthyHands.Server.Models
                 }
             }; builder.Entity<ApplicationUser>().HasData(users);
 
-            // Seed UserRoles
-            List<IdentityUserRole<string>> userRoles = new List<IdentityUserRole<string>>();  // Add Password For All Users
-            users[0].PasswordHash = passwordHasher.HashPassword(users[0], "P@55w0rd");
+            // Seed UserRoles
+            List<IdentityUserRole<string>> userRoles = new List<IdentityUserRole<string>>();  // Add Password For All Users
+            users[0].PasswordHash = passwordHasher.HashPassword(users[0], "P@55w0rd");
             users[1].PasswordHash = passwordHasher.HashPassword(users[1], "P@55w0rd");
             userRoles.Add(new IdentityUserRole<string>
             {

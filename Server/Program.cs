@@ -1,4 +1,5 @@
 using HealthyHands.Server.Data;
+using HealthyHands.Server.Data.Repository.UserRepository;
 using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,8 @@ builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
 
 builder.Services.AddTransient<ApplicationDbContext>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

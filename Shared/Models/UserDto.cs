@@ -36,6 +36,10 @@ namespace HealthyHands.Shared.Models
         /// </summary>
         public int? ActivityLevel { get; set; }
         /// <summary>
+        /// Gets or sets the daily calorie goal
+        /// </summary>
+        public int? CalorieGoal { get; set; }
+        /// <summary>
         /// Gets or sets the birth day.
         /// </summary>
         public DateTime? BirthDay { get; set; }

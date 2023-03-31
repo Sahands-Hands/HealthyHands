@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using HealthyHands.Server.Data.Repository.UserRepository;
 
 namespace HealthyHands.Server.Controllers
 {
@@ -19,18 +20,15 @@ namespace HealthyHands.Server.Controllers
     [Route("user")]
     public class UserController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserRepository _userRepository;
 
         /// <summary>
         /// UserController Constructor.
         /// </summary>
-        /// <param name="context">HealthyHands DbContext</param>
-        /// <param name="userManager">HealthyHands UserManager</param>
-        public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        /// <param name="userRepository"> <see cref="UserRepository"/></param>
+        public UserController(IUserRepository userRepository)
         {
-            _context = context;
-            _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -42,25 +40,24 @@ namespace HealthyHands.Server.Controllers
         [Route("")]
         public async Task<ActionResult<UserDto>> UserInfo()
         {
-            var user = await _context.Users.Select(u =>
-                new UserDto
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Height = u.Height,
-                    Gender = u.Gender,
-                    ActivityLevel = u.ActivityLevel,
-                    BirthDay = u.BirthDay,
-                }).FirstOrDefaultAsync(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userDto = new UserDto();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user == null)
+            try
             {
-                return NotFound();
+                userDto = await _userRepository.GetUser(userId);
+            }
+            catch
+            {
+                return BadRequest(userDto);
             }
 
-            return Ok(user);
+            if (userDto == null)
+            {
+                return NotFound(userDto);
+            }
+
+            return Ok(userDto);
         }
 
         /// <summary>
@@ -71,32 +68,24 @@ namespace HealthyHands.Server.Controllers
         /// <returns><see cref="OkResult"/> upon success, otherwise <see cref="ContentResult"/> with <see cref="NotFoundObjectResult"/> and error description</returns>
         [HttpPut]
         [Route("update")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateUserInfo([FromBody] UserDto userDto)
         {
-            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if ((user == null) || (userDto.Id != user.Id))
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != userDto.Id)
             {
-                return NotFound();
+                return Forbid();
             }
 
             try
             {
-                user.FirstName = userDto.FirstName;
-                user.LastName = userDto.LastName;
-                user.Height = userDto.Height;
-                user.Gender = userDto.Gender;
-                user.ActivityLevel = userDto.ActivityLevel;
-
-                await _userManager.UpdateAsync(user);
+                await _userRepository.UpdateUser(userDto, userId);
+                _userRepository.Save();
             }
             catch
             {
                 return BadRequest();
             }
-            
+
             return Ok();
         }
     }
