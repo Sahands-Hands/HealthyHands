@@ -37,6 +37,7 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
             var user = _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
+                CalorieGoal = u.CalorieGoal,
                 UserWeights = u.UserWeights
             }).FirstOrDefault(u => u.Id == userId);
 
@@ -57,6 +58,7 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
             var user = _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
+                CalorieGoal = u.CalorieGoal,
                 UserWeights = u.UserWeights
             }).FirstOrDefault(u => u.Id == userId);
 
