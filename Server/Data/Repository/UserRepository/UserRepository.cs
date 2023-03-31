@@ -77,7 +77,7 @@ public class UserRepository : IUserRepository
     /// <summary>
     /// Saves the context.
     /// </summary>
-    public async void Save()
+    public async Task Save()
     {
         await _context.SaveChangesAsync();
     }

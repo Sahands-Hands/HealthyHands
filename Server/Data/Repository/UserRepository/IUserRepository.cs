@@ -25,5 +25,5 @@ public interface IUserRepository : IDisposable
     /// <summary>
     /// Saves the context.
     /// </summary>
-    void Save();
+    Task Save();
 }

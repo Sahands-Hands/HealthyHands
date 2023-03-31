@@ -79,7 +79,7 @@ namespace HealthyHands.Server.Controllers
             try
             {
                 await _userRepository.UpdateUser(userDto, userId);
-                _userRepository.Save();
+                await _userRepository.Save();
             }
             catch
             {
