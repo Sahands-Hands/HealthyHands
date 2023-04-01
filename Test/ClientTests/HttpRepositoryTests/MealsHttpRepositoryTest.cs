@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
-using HealthyHands.Shared.Models;
-using System.Text.Json;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 using HealthyHands.Client.HttpRepository.MealHttpRepository;
+using HealthyHands.Shared.Models;
 using HealthyHands.Tests.Helpers;
+using Xunit;
 
-namespace HealthyHands.Tests.ClientTests.HttpRepository.MealsTests
+namespace HealthyHands.Tests.ClientTests.HttpRepositoryTests
 {
 	public class MealsHttpRepositoryTests
 	{

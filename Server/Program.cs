@@ -1,7 +1,10 @@
 using HealthyHands.Server.Data;
 using HealthyHands.Server.Data.Repository.MealsRepository;
+using HealthyHands.Server.Data.Repository.UserRepository;
+using HealthyHands.Server.Data.Repository.WorkoutsRepository;
 using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -9,11 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// var connectionString = builder.Configuration.GetConnectionString("RyanConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentityServer()
@@ -24,6 +29,8 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddTransient<ApplicationDbContext>();
 
+builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+builder.Services.AddScoped(typeof(IWorkoutsRepository), typeof(WorkoutsRepository));  // Add Workouts Repository
 builder.Services.AddScoped(typeof(IMealsRepository), typeof(MealsRepository));  // Add Workouts Repository
 
 builder.Services.AddControllersWithViews();
@@ -57,6 +64,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
 //builder.Services.AddCors(options =>
 //{
 //    options.AddPolicy("NewPolicy", builder =>

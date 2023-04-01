@@ -1,1 +1,0 @@
-﻿delete this when you put other stuff in the UserHttpRepository folder. Git doesnt track empty directories :(
