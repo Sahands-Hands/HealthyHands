@@ -16,6 +16,7 @@ namespace HealthyHands.Server.Data
         }
         public DbSet<UserWorkout> UserWorkouts { get; set; }
         public DbSet<UserWeight> UserWeights { get; set; }
+        public DbSet<UserMeal> UserMeals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

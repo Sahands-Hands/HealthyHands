@@ -17,7 +17,7 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoWithAllWorkouts(string userId);
+        Task<UserDto> GetUserDtoWithAllWorkouts(string userId);
 
         /// <summary>
         /// Gets the user dto by workout date.
@@ -25,7 +25,7 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="workoutDate">The workout date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoByWorkoutDate(string userId, string workoutDate);
+        Task<UserDto> GetUserDtoByWorkoutDate(string userId, string workoutDate);
 
         /// <summary>
         /// Gets the user workout by user workout id.
@@ -33,29 +33,29 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         /// </summary>
         /// <param name="userWorkoutId">The user workout id.</param>
         /// <returns>A <see cref="UserWorkout"/>.</returns>
-        UserWorkout GetUserWorkoutByUserWorkoutId(string userWorkoutId);
+        Task<UserWorkout> GetUserWorkoutByUserWorkoutId(string userWorkoutId);
 
         /// <summary>
         /// Adds the user workout.
         /// </summary>
         /// <param name="userWorkout">The user workout.</param>
-        void AddUserWorkout(UserWorkout userWorkout);
+        Task AddUserWorkout(UserWorkout userWorkout);
 
         /// <summary>
         /// Updates the user workout.
         /// </summary>
         /// <param name="userWorkout">The user workout.</param>
-        void UpdateUserWorkout(UserWorkout userWorkout);
+        Task UpdateUserWorkout(UserWorkout userWorkout);
 
         /// <summary>
         /// Deletes the user workout.
         /// </summary>
         /// <param name="userWorkoutId">The user workout id.</param>
-        void DeleteUserWorkout(string userWorkoutId);
+        Task DeleteUserWorkout(string userWorkoutId);
 
         /// <summary>
         /// Saves changes to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        void Save();
+        Task Save();
     }
 }

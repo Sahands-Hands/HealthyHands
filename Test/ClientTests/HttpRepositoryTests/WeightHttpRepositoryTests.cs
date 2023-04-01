@@ -1,18 +1,16 @@
-﻿using HealthyHands.Client.HttpRepository.WeightHttpRepository;
-using HealthyHands.Shared.Models;
-using Moq;
-using Moq.Protected;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using HealthyHands.Client.HttpRepository.WeightHttpRepository;
+using HealthyHands.Shared.Models;
+using Moq;
 using Moq.Contrib.HttpClient;
+using Xunit;
 
-namespace HealthyHands.Tests
+namespace HealthyHands.Tests.ClientTests.HttpRepositoryTests
 {
     public class WeightHttpRepositoryTests
     {

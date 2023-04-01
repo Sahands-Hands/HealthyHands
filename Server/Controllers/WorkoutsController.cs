@@ -27,7 +27,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="workoutsRepository">The workouts repository.</param>
         public WorkoutsController(IWorkoutsRepository workoutsRepository)
         {
-            _workoutsRepository =workoutsRepository;
+            _workoutsRepository = workoutsRepository;
         }
 
         /// <summary>
@@ -39,19 +39,15 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> GetWorkouts()
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             try
             {
-                user = _workoutsRepository.GetUserDtoWithAllWorkouts(userId);
+                user = await _workoutsRepository.GetUserDtoWithAllWorkouts(userId);
             }
             catch
             {
                 return BadRequest();
-            }
-
-            if (user == null)
-            {
-                return NotFound();
             }
 
             return Ok(user);
@@ -63,24 +59,19 @@ namespace HealthyHands.Server.Controllers
         /// <param name="date">The date.</param>
         /// <returns>A <see cref="UserDto"/> with workouts</returns>
         [HttpGet]
-        [Route("byDate")]
+        [Route("byDate/{date}")]
         public async Task<ActionResult<UserDto>> GetByWorkoutDate(string date)
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             try
             {
-                user = _workoutsRepository.GetUserDtoByWorkoutDate(userId, date);
+                user = await _workoutsRepository.GetUserDtoByWorkoutDate(userId, date);
             }
             catch
             {
                 return BadRequest();
-            }
-
-            if (user == null)
-            {
-                return NotFound();
             }
 
             return Ok(user);
@@ -95,7 +86,7 @@ namespace HealthyHands.Server.Controllers
         [Route("add")]
         public async Task<ActionResult> AddWorkout([FromBody] UserWorkoutDto userWorkoutDto)
         {
-            UserWorkout userWorkout = new UserWorkout
+            var userWorkout = new UserWorkout
             {
                 UserWorkoutId = Guid.NewGuid().ToString(),
                 WorkoutName = userWorkoutDto.WorkoutName,
@@ -109,8 +100,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _workoutsRepository.AddUserWorkout(userWorkout);
-                _workoutsRepository.Save();
+                await _workoutsRepository.AddUserWorkout(userWorkout);
+                await _workoutsRepository.Save();
             }
             catch
             {
@@ -129,7 +120,7 @@ namespace HealthyHands.Server.Controllers
         [Route("update")]
         public async Task<ActionResult> UpdateWorkout([FromBody] UserWorkoutDto workoutDto)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (workoutDto.ApplicationUserId != userId)
             {
                 return NotFound();
@@ -148,8 +139,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _workoutsRepository.UpdateUserWorkout(workout);
-                _workoutsRepository.Save();
+                await _workoutsRepository.UpdateUserWorkout(workout);
+                await _workoutsRepository.Save();
             }
             catch
             {
@@ -165,10 +156,10 @@ namespace HealthyHands.Server.Controllers
         /// <param name="userWorkoutId">The user workout id.</param>
         /// <returns>An Http Status Code</returns>
         [HttpDelete]
-        [Route("delete")]
+        [Route("delete/{userWorkoutId}")]
         public async Task<ActionResult> DeleteWorkout(string userWorkoutId)
         {
-            UserWorkout workoutToDelete = _workoutsRepository.GetUserWorkoutByUserWorkoutId(userWorkoutId);
+            UserWorkout workoutToDelete = await _workoutsRepository.GetUserWorkoutByUserWorkoutId(userWorkoutId);
             if (workoutToDelete == null || workoutToDelete.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 return NotFound();
@@ -176,8 +167,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             { 
-                _workoutsRepository.DeleteUserWorkout(userWorkoutId);
-                _workoutsRepository.Save();
+                await _workoutsRepository.DeleteUserWorkout(userWorkoutId);
+                await _workoutsRepository.Save();
             }
             catch
             {
@@ -197,6 +188,4 @@ namespace HealthyHands.Server.Controllers
             base.Dispose(disposing);
         }
     }
-
-    
 }
