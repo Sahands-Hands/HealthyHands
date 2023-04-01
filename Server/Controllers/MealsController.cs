@@ -42,7 +42,7 @@ namespace HealthyHands.Server.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
-                user = _mealsRepository.GetUserDtoWithAllMeals(userId);
+                user = await _mealsRepository.GetUserDtoWithAllMeals(userId);
             }
             catch
             {
@@ -71,7 +71,7 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                user = _mealsRepository.GetUserDtoByMealDate(userId, date);
+                user = await _mealsRepository.GetUserDtoByMealDate(userId, date);
             }
             catch
             {
@@ -91,7 +91,7 @@ namespace HealthyHands.Server.Controllers
         /// </summary>
         /// <param name="userMealDto">The user meal dto.</param>
         /// <returns>An Http Status Code</returns>
-        [HttpPost]
+        [HttpPut]
         [Route("add")]
         public async Task<ActionResult> AddMeal([FromBody] UserMealDto userMealDto)
         {
@@ -110,8 +110,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _mealsRepository.AddUserMeal(userMeal);
-                _mealsRepository.Save();
+               await _mealsRepository.AddUserMeal(userMeal);
+               await _mealsRepository.Save();
             }
             catch
             {
@@ -151,8 +151,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _mealsRepository.UpdateUserMeal(meal);
-                _mealsRepository.Save();
+                await _mealsRepository.UpdateUserMeal(meal);
+                await _mealsRepository.Save();
             }
             catch
             {
@@ -179,8 +179,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _mealsRepository.DeleteUserMeal(userMealId);
-                _mealsRepository.Save();
+                await _mealsRepository.DeleteUserMeal(userMealId);
+                await _mealsRepository.Save();
             }
             catch
             {

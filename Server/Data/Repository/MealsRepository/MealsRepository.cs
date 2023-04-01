@@ -32,13 +32,13 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoWithAllMeals(string userId)
+        public async Task<UserDto> GetUserDtoWithAllMeals(string userId)
         {
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 UserMeals = u.UserMeals
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             return user;
         }
@@ -49,16 +49,16 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="mealDate">The meal date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoByMealDate(string userId, string mealDate)
+        public async Task<UserDto> GetUserDtoByMealDate(string userId, string mealDate)
         {
             DateTime mealDateTime;
             DateTime.TryParse(mealDate, out mealDateTime);
 
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 UserMeals = u.UserMeals
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             user.UserMeals = user.UserMeals.Where(u => u.MealDate.Date == mealDateTime.Date).Select(m => m).ToList();
 
@@ -80,18 +80,18 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// Adds the user meal.
         /// </summary>
         /// <param name="userMeal">The user meal.</param>
-        public void AddUserMeal(UserMeal userMeal)
+        public async Task AddUserMeal(UserMeal userMeal)
         {
-            _context.UserMeals.AddAsync(userMeal);
+            await _context.UserMeals.AddAsync(userMeal);
         }
 
         /// <summary>
         /// Updates the user meal.
         /// </summary>
         /// <param name="userMeal">The user meal.</param>
-        public void UpdateUserMeal(UserMeal userMeal)
+        public async Task UpdateUserMeal(UserMeal userMeal)
         {
-            var mealToUpdate = _context.UserMeals.Select(m => m).FirstOrDefault(m => m.UserMealId == userMeal.UserMealId && m.ApplicationUserId == userMeal.ApplicationUserId);
+            var mealToUpdate = await _context.UserMeals.Select(m => m).FirstOrDefaultAsync(m => m.UserMealId == userMeal.UserMealId && m.ApplicationUserId == userMeal.ApplicationUserId);
 
             mealToUpdate.MealName = userMeal.MealName;
             mealToUpdate.MealDate = userMeal.MealDate;
@@ -108,22 +108,22 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// Deletes the user meal.
         /// </summary>
         /// <param name="userMealId">The user meal id.</param>
-        public void DeleteUserMeal(string userMealId)
+        public async Task DeleteUserMeal(string userMealId)
         {
-            var userMealToRemove = _context.UserMeals.Select(m => m)
-                .FirstOrDefault(m => m.UserMealId == userMealId);
+            var userMealToRemove = await _context.UserMeals.Select(m => m)
+                .FirstOrDefaultAsync(m => m.UserMealId == userMealId);
             if (userMealToRemove != null)
             {
-                _context.UserMeals.Remove(userMealToRemove);
+               _context.UserMeals.Remove(userMealToRemove);
             }
         }
 
         /// <summary>
         /// Saves changes made to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        public void Save()
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private bool _disposed = false;

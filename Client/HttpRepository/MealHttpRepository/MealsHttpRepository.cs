@@ -58,7 +58,7 @@ namespace HealthyHands.Client.HttpRepository.MealHttpRepository
         }
         public async Task<bool> AddMeals(UserMealDto userMealDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("meals/add", userMealDto);
+            var response = await _httpClient.PutAsJsonAsync<UserMealDto>("meals/add", userMealDto);
             if (!response.IsSuccessStatusCode)
             {
                 return false;

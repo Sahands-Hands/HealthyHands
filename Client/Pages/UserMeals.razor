@@ -1,0 +1,67 @@
+﻿@page "/usermeals"
+<h3>UserMeals</h3>
+
+<PageTitle>Meals</PageTitle>
+
+<h1>Meals</h1>
+<label for="meal">Meal Name:</label>
+<input id="meal" type="text" @bind="newMeal" />
+
+<label for="mealDate">Date:</label>
+<input id="mealDate" type="date" @bind="newMealDate" />
+
+<label for="Calories">Calories:</label>
+<input id="Calories" type="number" @bind="newCalories" />
+
+<label for="Protein">Protein:</label>
+<input id="Protein" type="number" @bind="newProtein" />
+
+<label for="Carbs">Carbs:</label>
+<input id="Carbs" type="number" @bind="newCarbs" />
+
+<label for="Fat">Fat:</label>
+<input id="Fat" type="number" @bind="newFat" />
+
+<label for="Sugar">Sugar:</label>
+<input id="Sugar" type="number" @bind="newSugar" />
+
+<label for="meal">Add Meal:</label>
+<button @onclick="() => AddUserMeals() ">Add</button>
+
+@if (User == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Meal Name</th>
+                <th>Meal Date</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th>Sugar</th>
+            </tr>
+        </thead>
+        @foreach (var UserMeal in User.UserMeals)
+        {
+            <tbody>
+            <tr>
+                <td>@UserMeal.MealName</td>
+                <td>@UserMeal.MealDate.ToString("d")</td>
+                <td>@UserMeal.Calories</td>
+                <td>@UserMeal.Protein</td>
+                <td>@UserMeal.Carbs</td>
+                <td>@UserMeal.Fat</td>
+                <td>@UserMeal.Sugar</td>
+            </tr>
+
+        </tbody>
+
+        }
+        
+    </table>
+}
