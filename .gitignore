@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Ignore Migrations Folder
 [Mm]igrations/
+
+# Ignore Jetbrains folder
+.idea/
