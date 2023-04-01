@@ -1,4 +1,5 @@
 using HealthyHands.Server.Data;
+using HealthyHands.Server.Data.Repository.UserRepository;
 using HealthyHands.Server.Data.Repository.WorkoutsRepository;
 using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -27,6 +28,7 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddTransient<ApplicationDbContext>();
 
+builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IWorkoutsRepository), typeof(WorkoutsRepository));  // Add Workouts Repository
 
 builder.Services.AddControllersWithViews();
