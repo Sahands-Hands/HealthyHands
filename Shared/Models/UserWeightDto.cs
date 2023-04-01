@@ -1,16 +1,22 @@
-﻿// Filename: UserWeightDto.cs
+// Filename: UserWeightDto.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HealthyHands.Shared.Models
 {
     /// <summary>
-    /// The user weight.
+    /// The user weight dto.
     /// </summary>
-    public class UserWeight
+    public class UserWeightDto
     {
         /// <summary>
         /// Gets or sets the user weight id.
         /// </summary>
-        public string UserWeightId { get; set; }
+        public string UserWeightId { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets the weight.
         /// </summary>
@@ -22,6 +28,6 @@ namespace HealthyHands.Shared.Models
         /// <summary>
         /// Gets or sets the application user id.
         /// </summary>
-        public string ApplicationUserId { get; set; }
+        public string? ApplicationUserId { get; set; } = string.Empty;
     }
 }

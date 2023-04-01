@@ -1,4 +1,5 @@
 using HealthyHands.Server.Data;
+using HealthyHands.Server.Data.Repository.WeightsRepository;
 using HealthyHands.Server.Data.Repository.MealsRepository;
 using HealthyHands.Server.Data.Repository.UserRepository;
 using HealthyHands.Server.Data.Repository.WorkoutsRepository;
@@ -7,14 +8,17 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // var connectionString = builder.Configuration.GetConnectionString("RyanConnection");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -32,10 +36,15 @@ builder.Services.AddTransient<ApplicationDbContext>();
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IWorkoutsRepository), typeof(WorkoutsRepository));  // Add Workouts Repository
 builder.Services.AddScoped(typeof(IMealsRepository), typeof(MealsRepository));  // Add Workouts Repository
+builder.Services.AddScoped(typeof(IWeightsRepository), typeof(WeightsRepository));
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<TooltipService>();
+builder.Services.AddScoped<ContextMenuService>();
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -65,15 +74,6 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("NewPolicy", builder =>
-//     builder.AllowAnyOrigin()
-//                  .AllowAnyMethod()
-//                  .AllowAnyHeader());
-//});
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -95,11 +95,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Healthy Hands API v1");
 });
 
-//public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContextSeedData seeder)
-//{
-//    seeder.SeedAdminUser();
-//}
-
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
@@ -109,16 +104,11 @@ app.UseRouting();
 
 app.UseIdentityServer();
 app.UseAuthentication();
-// app.UseCors("NewPolicy");
 app.UseAuthorization();
-//app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions { })
 
 
 app.MapRazorPages();
 app.MapControllers();
-//app.MapControllerRoute(
-//    name: "users",
-//    pattern: "{controller = User}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 
