@@ -1,4 +1,5 @@
 using HealthyHands.Server.Data;
+using HealthyHands.Server.Data.Repository.MealsRepository;
 using HealthyHands.Server.Data.Repository.UserRepository;
 using HealthyHands.Server.Data.Repository.WorkoutsRepository;
 using HealthyHands.Server.Models;
@@ -30,6 +31,7 @@ builder.Services.AddTransient<ApplicationDbContext>();
 
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IWorkoutsRepository), typeof(WorkoutsRepository));  // Add Workouts Repository
+builder.Services.AddScoped(typeof(IMealsRepository), typeof(MealsRepository));  // Add Workouts Repository
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

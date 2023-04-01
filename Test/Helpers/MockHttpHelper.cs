@@ -9,7 +9,7 @@ namespace HealthyHands.Tests.Helpers;
 
 public struct HttpRequest
 {
-    public HttpMethod Method{ get; set; }
+    public HttpMethod Method { get; set; }
     public string RequestUri { get; set; }
 }
 
@@ -32,7 +32,7 @@ public class MockHttpHelper
     {
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
         var requestUri = _baseAddress + httpRequest.RequestUri;
-        
+
         if (httpResponse.Response == "")
         {
             mockHttpMessageHandler.SetupRequest(httpRequest.Method, requestUri)
