@@ -1,5 +1,6 @@
 using HealthyHands.Server.Data;
 using HealthyHands.Server.Data.Repository.UserRepository;
+using HealthyHands.Server.Data.Repository.WorkoutsRepository;
 using HealthyHands.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// var connectionString = builder.Configuration.GetConnectionString("RyanConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -26,7 +28,8 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddTransient<ApplicationDbContext>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+builder.Services.AddScoped(typeof(IWorkoutsRepository), typeof(WorkoutsRepository));  // Add Workouts Repository
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

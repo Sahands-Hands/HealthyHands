@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HealthyHands.Client.Pages;
+using HealthyHands.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthyHands.Server.Models
@@ -33,6 +35,8 @@ namespace HealthyHands.Server.Models
                     Height = 72,
                     Gender = 1,
                     ActivityLevel = 1,
+                    WeightGoal = 2,
+                    CalorieGoal = 4000,
                     BirthDay = DateTime.Now
                 },
                 new ApplicationUser {

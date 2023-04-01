@@ -4,7 +4,7 @@ namespace HealthyHands.Client.HttpRepository.UserRepository
 {
     public class UserHttpRepository : IUserHttpRepository
     {
-        public readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         public UserHttpRepository(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -16,7 +16,7 @@ namespace HealthyHands.Client.HttpRepository.UserRepository
         /// <returns>UserDto object</returns>
         public async Task<UserDto> GetUserInfo()
         {
-            UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("user");
+            var user = await _httpClient.GetFromJsonAsync<UserDto>("user");
             return user;
         }
 

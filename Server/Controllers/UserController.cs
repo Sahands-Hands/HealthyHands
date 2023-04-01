@@ -1,4 +1,4 @@
-﻿// Filename: UserController.cs
+// Filename: UserController.cs
 
 using HealthyHands.Server.Data;
 using HealthyHands.Server.Models;
