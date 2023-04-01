@@ -1,0 +1,34 @@
+﻿@page "/user"
+
+<h3>UserDetails</h3>
+
+@if (User == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Height</th>
+                <th>Gender</th>
+                <th>Activity Level</th>
+                <th>Birthdate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@User.FirstName</td>
+                <td>@User.LastName</td>
+                <td>@User.Height</td>
+                <td>@User.Gender</td>
+                <td>@User.ActivityLevel</td>
+                <td>@User.BirthDay</td>
+            </tr>
+
+        </tbody>
+    </table>
+}
