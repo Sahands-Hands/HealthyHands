@@ -1,0 +1,55 @@
+@page "/adminfeatures"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using HealthyHands.Shared.Models
+@using HealthyHands.Client.HttpRepository.AdminHttpRepository
+
+@attribute [Authorize]
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAdminHttpRepository AdminHttpRepository
+
+<PageTitle>Admin Features</PageTitle>
+<h3>AdminFeatures</h3>
+
+<table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Admin</th>
+                <th>Locked Out</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in _usersList)
+        {
+            <tr>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.IsAdmin</td>
+                <td>@user.LockoutEnabled</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+@code {
+    private List<UserDto>? _usersList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+        if (UserAuth is not null && UserAuth.IsAuthenticated)
+        {
+            try
+            {
+                _usersList = await AdminHttpRepository.GetAllUsers();
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }  
+        }
+    }
+}

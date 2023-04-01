@@ -12,9 +12,9 @@ public interface IAdminRepository : IDisposable
 
     Task ResetUserPassword(string userId);
 
-    Task ChangeUserRoleAdmin(string userId);
+    Task ChangeUserRoleToAdmin(string userId);
 
-    Task ChangeUserRoleUser(string userId);
+    Task ChangeUserRoleToUser(string userId);
 
     Task Save();
 

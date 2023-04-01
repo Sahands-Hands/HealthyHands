@@ -11,14 +11,11 @@ public class AdminRepository : IAdminRepository
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private bool _disposed;
-    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+    public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;
-        _roleManager = roleManager;
         _disposed = false;
     }
 
@@ -26,7 +23,6 @@ public class AdminRepository : IAdminRepository
     {
         List<UserDto> usersDtoList = new List<UserDto>();
         var usersList = await _userManager.Users.Select(u => u).ToListAsync();
-
         foreach (var u in usersList)
         {
             var isAdmin = await _userManager.IsInRoleAsync(u, "Admin");
@@ -41,14 +37,14 @@ public class AdminRepository : IAdminRepository
                 });
         }
         
-        return new List<UserDto>();
+        return usersDtoList;
     }
 
     public async Task<bool> UserExists(string userId)
     {
+        var user = await _userManager.Users.Select(u => u.Id).FirstOrDefaultAsync(u => u == userId);
         
-        return true;
-        
+        return (user == userId);
     }
 
     public async Task LockoutUser(string userId)
@@ -65,11 +61,11 @@ public class AdminRepository : IAdminRepository
         await _userManager.ResetPasswordAsync(userToResetPassword, passwordResetCode, "2rx9j=Ik*BctHQ=");
     }
 
-    public async Task ChangeUserRoleAdmin(string userId)
+    public async Task ChangeUserRoleToAdmin(string userId)
     {
         var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
         var oldRoleId = await _userManager.GetRolesAsync(oldUser);
-        var oldRoleName = await _roleManager.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
+        var oldRoleName = await _context.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
 
         if (oldRoleName.Name != "Admin")
         {
@@ -78,11 +74,11 @@ public class AdminRepository : IAdminRepository
         }
     }
 
-    public async Task ChangeUserRoleUser(string userId)
+    public async Task ChangeUserRoleToUser(string userId)
     {
         var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
         var oldRoleId = await _userManager.GetRolesAsync(oldUser);
-        var oldRoleName = await _roleManager.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
+        var oldRoleName = await _context.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
 
         if (oldRoleName.Name != "User")
         {
@@ -108,7 +104,6 @@ public class AdminRepository : IAdminRepository
             {
                 _context.Dispose();
                 _userManager.Dispose();
-                _roleManager.Dispose();
             }
         }
 
@@ -123,6 +118,4 @@ public class AdminRepository : IAdminRepository
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-    
-    
 }

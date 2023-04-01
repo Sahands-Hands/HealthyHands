@@ -39,6 +39,8 @@ namespace HealthyHands.Server.Models
                     Email = AdminUserName,
                     NormalizedEmail = AdminUserName.ToUpper(),
                     EmailConfirmed = true,
+                    FirstName = "Test",
+                    LastName = "User"
                 }
             }; builder.Entity<ApplicationUser>().HasData(users);
             ///----------------------------------------------------

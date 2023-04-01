@@ -25,8 +25,9 @@ public class AdminController : Controller
         {
             userDtoList = await _adminRepository.GetAllUsers();
         }
-        catch
+        catch (Exception e)
         {
+            Console.WriteLine(e.ToString());
             return BadRequest(userDtoList);
         }
 
@@ -42,6 +43,21 @@ public class AdminController : Controller
     [Route("lockout")]
     public async Task<ActionResult> LockoutUser(string userId)
     {
+        if (!await _adminRepository.UserExists(userId))
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await _adminRepository.LockoutUser(userId);
+            await _adminRepository.Save();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+        
         return Ok();
     }
 
@@ -49,6 +65,21 @@ public class AdminController : Controller
     [Route("role/admin")]
     public async Task<ActionResult> SetUserRoleAdmin(string userId)
     {
+        if (!await _adminRepository.UserExists(userId))
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await _adminRepository.ChangeUserRoleToAdmin(userId);
+            await _adminRepository.Save();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+        
         return Ok();
     }
 
@@ -56,13 +87,43 @@ public class AdminController : Controller
     [Route("role/user")]
     public async Task<ActionResult> SetUserRoleUser(string userId)
     {
+        if (!await _adminRepository.UserExists(userId))
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await _adminRepository.ChangeUserRoleToUser(userId);
+            await _adminRepository.Save();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+        
         return Ok();
     }
 
     [HttpPut]
-    [Route("pwdrst")]
+    [Route("reset")]
     public async Task<ActionResult> ResetUserPassword(string userId)
     {
+        if (!await _adminRepository.UserExists(userId))
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await _adminRepository.ResetUserPassword(userId);
+            await _adminRepository.Save();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+        
         return Ok();
     }
 }

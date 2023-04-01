@@ -1,14 +1,11 @@
 ﻿using HealthyHands.Shared.Models;
-using Microsoft.AspNetCore.Components;
-using System.ComponentModel.Design;
 using System.Net.Http.Json;
-using System.Security.Claims;
 
 namespace HealthyHands.Client.HttpRepository.AdminHttpRepository
 {
     public class AdminHttpRepository : IAdminHttpRepository
     {
-        public readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         public AdminHttpRepository(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -16,50 +13,37 @@ namespace HealthyHands.Client.HttpRepository.AdminHttpRepository
 
         public async Task<List<UserDto>> GetAllUsers()
         {
-            UserDto userDto = await _httpClient.GetFromJsonAsync<UserDto>("admin");
-            return new List<UserDto>() { userDto };
-            //return await JsonSerializer.DeserializeAsync<List<UserDto>>
-            //    (await _httpClient.GetStreamAsync($"api/admin"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var userDtoList = await _httpClient.GetFromJsonAsync<List<UserDto>>("admin");
+            
+            return userDtoList;
         }
 
         public async Task<bool> LockoutUser(string userId)
         { 
             var response = await _httpClient.PutAsJsonAsync("admin/lockout", userId);
-            if(!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-            return true;
+            
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> SetUserRoleAdmin(string userId)
         { 
             var response = await _httpClient.PutAsJsonAsync("admin/role/admin", userId);
-            if(!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-            return true;
+            
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> SetUserRoleUser(string userId)
         {
-            var response = await _httpClient.PutAsJsonAsync("admin/role/admin", userId);
-            if(!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-            return true;
+            var response = await _httpClient.PutAsJsonAsync("admin/role/user", userId);
+            
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> ResetUserPassword(string userId)
         {
-            var response = await _httpClient.PutAsJsonAsync("admin/pwdrst", userId);
-            if (!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-            return true;
+            var response = await _httpClient.PutAsJsonAsync("admin/reset", userId);
+            
+            return response.IsSuccessStatusCode;
         }
     }
 }
