@@ -24,29 +24,74 @@ public class AdminRepository : IAdminRepository
 
     public async Task<List<UserDto>> GetAllUsers()
     {
-        var usersList = await _userManager.Users.Select(u =>
-            new
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                LockoutEnabled = u.LockoutEnabled
-            }).ToListAsync();
+        List<UserDto> usersDtoList = new List<UserDto>();
+        var usersList = await _userManager.Users.Select(u => u).ToListAsync();
 
+        foreach (var u in usersList)
+        {
+            var isAdmin = await _userManager.IsInRoleAsync(u, "Admin");
+            usersDtoList.Add(
+                new UserDto
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    IsAdmin = isAdmin,
+                    LockoutEnabled = u.LockoutEnabled,
+                });
+        }
+        
         return new List<UserDto>();
     }
 
     public async Task<bool> UserExists(string userId)
     {
-        return true;}
+        
+        return true;
+        
+    }
 
-    public async Task LockoutUser(string userId){}
+    public async Task LockoutUser(string userId)
+    {
+        var userToLockout = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+        userToLockout.LockoutEnabled = true;
+        _context.Users.Update(userToLockout);
+    }
 
-    public async Task ChangeUserRoleAdmin(string userId){}
-    
-    public async Task ChangeUserRoleUser(string userId) {}
+    public async Task ResetUserPassword(string userId)
+    {
+        var userToResetPassword = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+        var passwordResetCode = await _userManager.GeneratePasswordResetTokenAsync(userToResetPassword);
+        await _userManager.ResetPasswordAsync(userToResetPassword, passwordResetCode, "2rx9j=Ik*BctHQ=");
+    }
 
-    public async void Save()
+    public async Task ChangeUserRoleAdmin(string userId)
+    {
+        var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+        var oldRoleId = await _userManager.GetRolesAsync(oldUser);
+        var oldRoleName = await _roleManager.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
+
+        if (oldRoleName.Name != "Admin")
+        {
+            await _userManager.RemoveFromRoleAsync(oldUser, oldRoleName.Name);
+            await _userManager.AddToRoleAsync(oldUser, "Admin");
+        }
+    }
+
+    public async Task ChangeUserRoleUser(string userId)
+    {
+        var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+        var oldRoleId = await _userManager.GetRolesAsync(oldUser);
+        var oldRoleName = await _roleManager.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
+
+        if (oldRoleName.Name != "User")
+        {
+            await _userManager.RemoveFromRoleAsync(oldUser, oldRoleName.Name);
+            await _userManager.AddToRoleAsync(oldUser, "User");
+        }
+    }
+
+    public async Task Save()
     {
         await _context.SaveChangesAsync();
     }

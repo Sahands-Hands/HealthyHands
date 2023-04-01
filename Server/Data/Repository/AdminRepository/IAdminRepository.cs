@@ -10,10 +10,12 @@ public interface IAdminRepository : IDisposable
 
     Task LockoutUser(string userId);
 
+    Task ResetUserPassword(string userId);
+
     Task ChangeUserRoleAdmin(string userId);
 
     Task ChangeUserRoleUser(string userId);
 
-    void Save();
+    Task Save();
 
 }
