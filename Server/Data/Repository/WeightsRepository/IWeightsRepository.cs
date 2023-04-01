@@ -17,7 +17,7 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoWithAllWeights(string userId);
+        Task<UserDto> GetUserDtoWithAllWeights(string userId);
 
         /// <summary>
         /// Gets the user dto by weight date.
@@ -25,7 +25,7 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="weightDate">The weight date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoByWeightDate(string userId, string weightDate);
+        Task<UserDto> GetUserDtoByWeightDate(string userId, string weightDate);
 
         /// <summary>
         /// Gets the user weight by user weight id.
@@ -39,23 +39,23 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// Adds the user weight.
         /// </summary>
         /// <param name="userWeight">The user weight.</param>
-        void AddUserWeight(UserWeight userWeight);
+        Task AddUserWeight(UserWeight userWeight);
 
         /// <summary>
         /// Updates the user weight.
         /// </summary>
         /// <param name="userWeight">The user weight.</param>
-        void UpdateUserWeight(UserWeight userWeight);
+        Task UpdateUserWeight(UserWeight userWeight);
 
         /// <summary>
         /// Deletes the user weight.
         /// </summary>
         /// <param name="userWeightId">The user weight id.</param>
-        void DeleteUserWeight(string userWeightId);
+        Task DeleteUserWeight(string userWeightId);
 
         /// <summary>
         /// Saves changes to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        void Save();
+        Task Save();
     }
 }

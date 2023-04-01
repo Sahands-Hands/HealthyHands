@@ -42,7 +42,7 @@ namespace HealthyHands.Server.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
-                user = _weightsRepository.GetUserDtoWithAllWeights(userId);
+                user = await _weightsRepository.GetUserDtoWithAllWeights(userId);
             }
             catch
             {
@@ -71,7 +71,7 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                user = _weightsRepository.GetUserDtoByWeightDate(userId, date);
+                user = await _weightsRepository.GetUserDtoByWeightDate(userId, date);
             }
             catch
             {
@@ -105,8 +105,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _weightsRepository.AddUserWeight(userWeight);
-                _weightsRepository.Save();
+                await _weightsRepository.AddUserWeight(userWeight);
+                await _weightsRepository.Save();
             }
             catch
             {
@@ -141,8 +141,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _weightsRepository.UpdateUserWeight(weight);
-                _weightsRepository.Save();
+                await _weightsRepository.UpdateUserWeight(weight);
+                await _weightsRepository.Save();
             }
             catch
             {
@@ -169,8 +169,8 @@ namespace HealthyHands.Server.Controllers
 
             try
             {
-                _weightsRepository.DeleteUserWeight(userWeightId);
-                _weightsRepository.Save();
+                await _weightsRepository.DeleteUserWeight(userWeightId);
+                await _weightsRepository.Save();
             }
             catch
             {

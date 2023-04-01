@@ -9,55 +9,71 @@
 
 <label for="weightDate">Date:</label>
 <input id="weightDate" type="date" @bind="newWeightDate" />
-
 <label for="weight">Weight:</label>
 <button @onclick="() => AddWeight() ">Add</button>
 
-
-
 @if (User == null)
 {
-	<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-	<table class="table">
-		<thead>
-			<tr>
-                <th> Date </th>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
                 <th>Weight</th>
-      
-</tr>
+                <th></th>
+            </tr>
+        </thead>
 
-</thead>
-       
-            @foreach (var weight in User.UserWeights)
-            {
+        @foreach (var weight in User.UserWeights)
+        {
             <tbody>
                 <tr>
-                    <td>@weight.WeightDate</td>
-                    <td>@weight.Weight</td>
-                    <td><button @onclick="() => Delete(weight.UserWeightId)">Delete</button></td>
-                   
+                    @if (editingWeightId == weight.UserWeightId)
+                    {
+                        <td><input type="date" @bind="@editingWeightDate" /></td>
+                        <td><input type="number" @bind="@editingWeight" /></td>
+                        <td>
+                            <button @onclick="() => Save(weight.UserWeightId)">Save</button>
+                            <button @onclick="() => Cancel()">Cancel</button>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@weight.WeightDate</td>
+                        <td>@weight.Weight</td>
+                        <td>
+                            <button @onclick="() => Edit(weight.UserWeightId)">Edit</button>
+                            <button @onclick="() => Delete(weight.UserWeightId)">Delete</button>
+                        </td>
+                    }
                 </tr>
-               
             </tbody>
-            }
-        <RadzenChart>
-        <RadzenLineSeries Data="@User.UserWeights"
-                      CategoryProperty="WeightDate"
-                      ValueProperty="Weight"    />
-    </RadzenChart>
+        }
     </table>
+
+
+    <h2>Weight Graph</h2>
+    <RadzenChart>
+        <RadzenLegend />
+        <RadzenCategoryAxis>
+            <RadzenAxisTitle Text="Date" />
+        </RadzenCategoryAxis>
+        <RadzenValueAxis>
+            <RadzenAxisTitle Text="Weight" />
+            <RadzenGridLines Visible="true" />
+        </RadzenValueAxis>
+        <RadzenLineSeries Data="@User.UserWeights.OrderByDescending(w => w.WeightDate).Take(7)"
+                      CategoryProperty="WeightDate"
+                      ValueProperty="Weight"
+                      Title="Weight"
+                      Stroke="red">
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+            <RadzenSeriesDataLabels Visible="true" />
+        </RadzenLineSeries>
+    </RadzenChart>
 }
-
-
-
-
-
-
-
-
-
 
 

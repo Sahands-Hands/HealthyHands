@@ -32,14 +32,14 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoWithAllWeights(string userId)
+        public async Task<UserDto> GetUserDtoWithAllWeights(string userId)
         {
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 CalorieGoal = u.CalorieGoal,
                 UserWeights = u.UserWeights
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             return user;
         }
@@ -50,17 +50,17 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="weightDate">The weight date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        public UserDto GetUserDtoByWeightDate(string userId, string weightDate)
+        public async Task<UserDto> GetUserDtoByWeightDate(string userId, string weightDate)
         {
             DateTime weightDateTime;
             DateTime.TryParse(weightDate, out weightDateTime);
 
-            var user = _context.Users.Select(u => new UserDto
+            var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
                 CalorieGoal = u.CalorieGoal,
                 UserWeights = u.UserWeights
-            }).FirstOrDefault(u => u.Id == userId);
+            }).FirstOrDefaultAsync(u => u.Id == userId);
 
             user.UserWeights = user.UserWeights.Where(u => u.WeightDate.Date == weightDateTime.Date).Select(w => w).ToList();
 
@@ -82,18 +82,18 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// Adds the user weight.
         /// </summary>
         /// <param name="userWeight">The user weight.</param>
-        public void AddUserWeight(UserWeight userWeight)
+        public async Task AddUserWeight(UserWeight userWeight)
         {
-            _context.UserWeights.AddAsync(userWeight);
+            await _context.UserWeights.AddAsync(userWeight);
         }
 
         /// <summary>
         /// Updates the user weight.
         /// </summary>
         /// <param name="userWeight">The user weight.</param>
-        public void UpdateUserWeight(UserWeight userWeight)
+        public async Task UpdateUserWeight(UserWeight userWeight)
         {
-            var weightToUpdate = _context.UserWeights.Select(w => w).FirstOrDefault(w => w.UserWeightId == userWeight.UserWeightId && w.ApplicationUserId == userWeight.ApplicationUserId);
+            var weightToUpdate = await _context.UserWeights.Select(w => w).FirstOrDefaultAsync(w => w.UserWeightId == userWeight.UserWeightId && w.ApplicationUserId == userWeight.ApplicationUserId);
 
             weightToUpdate.Weight = userWeight.Weight;
             weightToUpdate.WeightDate = userWeight.WeightDate;
@@ -105,10 +105,10 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// Deletes the user weight.
         /// </summary>
         /// <param name="userWeightId">The user weight id.</param>
-        public void DeleteUserWeight(string userWeightId)
+        public async Task DeleteUserWeight(string userWeightId)
         {
-            var userWeightToRemove = _context.UserWeights.Select(w => w)
-                .FirstOrDefault(w => w.UserWeightId == userWeightId);
+            var userWeightToRemove = await _context.UserWeights.Select(w => w)
+                .FirstOrDefaultAsync(w => w.UserWeightId == userWeightId);
             if (userWeightToRemove != null)
             {
                 _context.UserWeights.Remove(userWeightToRemove);
@@ -118,9 +118,9 @@ namespace HealthyHands.Server.Data.Repository.WeightsRepository
         /// <summary>
         /// Saves changes made to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        public void Save()
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private bool _disposed = false;
