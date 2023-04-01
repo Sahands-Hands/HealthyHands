@@ -15,7 +15,6 @@
         /// </summary>
         public int? CalorieGoal { get; set; }
         public DateTime? BirthDay { get; set; }
-        
         public bool? LockoutEnabled { get; set; }
         public bool? IsAdmin { get; set; }
         public List<UserMeal> UserMeals { get; set; } = new List<UserMeal>();

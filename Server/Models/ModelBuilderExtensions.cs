@@ -29,6 +29,8 @@ namespace HealthyHands.Server.Models
                     Height = 72,
                     Gender = 1,
                     ActivityLevel = 1,
+                    WeightGoal = 2,
+                    CalorieGoal = 4000,
                     BirthDay = DateTime.Now
                 },
                 new ApplicationUser {
