@@ -91,7 +91,7 @@ namespace HealthyHands.Server.Controllers
         /// </summary>
         /// <param name="userMealDto">The user meal dto.</param>
         /// <returns>An Http Status Code</returns>
-        [HttpPut]
+        [HttpPost]
         [Route("add")]
         public async Task<ActionResult> AddMeal([FromBody] UserMealDto userMealDto)
         {
@@ -168,7 +168,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="userMealId">The user meal id.</param>
         /// <returns>An Http Status Code</returns>
         [HttpDelete]
-        [Route("delete")]
+        [Route("delete/{userMealId}")]
         public async Task<ActionResult> DeleteMeal(string userMealId)
         {
             UserMeal mealToDelete = _mealsRepository.GetUserMealByUserMealId(userMealId);
