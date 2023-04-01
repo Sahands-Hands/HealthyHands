@@ -13,8 +13,8 @@ using Radzen;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-// var connectionString = builder.Configuration.GetConnectionString("RyanConnection");
+// var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("RyanConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -40,11 +40,6 @@ builder.Services.AddScoped(typeof(IWeightsRepository), typeof(WeightsRepository)
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
-builder.Services.AddScoped<DialogService>();
-builder.Services.AddScoped<NotificationService>();
-builder.Services.AddScoped<TooltipService>();
-builder.Services.AddScoped<ContextMenuService>();
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -73,7 +68,6 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -105,7 +99,6 @@ app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapRazorPages();
 app.MapControllers();
