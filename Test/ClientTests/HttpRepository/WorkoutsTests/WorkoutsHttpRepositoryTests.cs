@@ -1,117 +1,130 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
-using RichardSzalay.MockHttp;
 using Xunit;
 using HealthyHands.Shared.Models;
 using System.Text.Json;
 using System.Net;
 using System.Net.Http;
-using HealthyHands.Client.HttpRepository.WorkoutsRepository;
-using Moq;
-using Moq.Contrib.HttpClient;
+using HealthyHands.Client.HttpRepository.WorkoutsHttpRepository;
+using HealthyHands.Tests.Helpers;
 
 namespace HealthyHands.Tests.ClientTests.HttpRepository.WorkoutsTests
 {
 	public class WorkoutsHttpRepositoryTests
 	{
+		# region Property
+		private readonly MockHttpHelper _mockHttpHelper = new("https://localhost:7255/workouts");
+		# endregion
+		
 		[Fact]
 		public async Task Test_GetWorkouts_ShouldSucceed() 
 		{
 			// Arrange
-			var userWorkoutsResponse = new UserDto
+			var expectedUserDto = new UserDto
 			{
-				Id = "29e6d8b3-2275-4acd-a29a-6fe27593d2fd",
-				UserName = "",
-				FirstName = null,
-				LastName = null,
-				Height = null,
-				Gender = null,
-				ActivityLevel = null,
-				BirthDay = null,
+				Id = "b25cbea2-3b57-4400-aef5-52cc035d0fc3",
+				UserName = "joesnow",
+				FirstName = "Joe",
+				LastName = "Snow",
+				Height = 72,
+				Gender = 1,
+				ActivityLevel = 2,
+				BirthDay = DateTime.Parse("1999-05-28T21:00:02.497"),
 				UserMeals = new List<UserMeal>(),
 				UserWeights = new List<UserWeight>(),
 				UserWorkouts = new List<UserWorkout>
 				{
 					new()
 					{
-						UserWorkoutId = "1746fa13-f1b0-4ee5-a44b-d38be3037299",
+						UserWorkoutId = "e4a578e7-ba20-4a88-a0a2-4a2f18fdda10",
 						WorkoutName = "Cardio",
 						WorkoutType = 1,
 						Intensity = 2,
-						Length = 30,
+						Length = 60,
 						WorkoutDate = DateTime.Parse("2023-03-28T21:00:02.497"),
 						CaloriesBurned = 420,
-						ApplicationUserId = "29e6d8b3-2275-4acd-a29a-6fe27593d2fd"
+						ApplicationUserId = "b25cbea2-3b57-4400-aef5-52cc035d0fc3"
 					}
 				}
 			};
-			var userWorkoutsResponseJson = JsonSerializer.Serialize(userWorkoutsResponse);
-			
-			var handlerMock = new Mock<HttpMessageHandler>();
-			var clientMock = handlerMock.CreateClient();
-			clientMock.BaseAddress = new Uri("https://localhost:7255");
-			handlerMock.SetupRequest(HttpMethod.Get, "https://localhost:7255/workouts")
-				.ReturnsResponse(HttpStatusCode.OK, userWorkoutsResponseJson);
+			var expectedUserDtoJson = JsonSerializer.Serialize(expectedUserDto);
 
-			var workoutsHttpRepository = new WorkoutsHttpRepository(clientMock);
+			var mockHttpMessageHandler = _mockHttpHelper.CreateMessageHandler(
+				new HttpRequest
+				{
+					Method = HttpMethod.Get, 
+					RequestUri = ""
+				},
+				new HttpResponse
+				{
+					StatusCode = HttpStatusCode.OK,
+					Response = expectedUserDtoJson
+				});
+			var mockClient = _mockHttpHelper.CreateClient(mockHttpMessageHandler);
+			var workoutsHttpRepository = new WorkoutsHttpRepository(mockClient);
 
 			// Act
-			var returnedUserDto = await workoutsHttpRepository.GetWorkouts();
-			var obj2 = JsonSerializer.Serialize(returnedUserDto);
+			var actualUserDto = await workoutsHttpRepository.GetWorkouts();
+			var actualUserDtoJson = JsonSerializer.Serialize(actualUserDto);
 			
 			//Assert
-			Assert.Equal(userWorkoutsResponseJson, obj2);
+			Assert.Equal(expectedUserDtoJson, actualUserDtoJson);
 		}
 
 		[Fact]
 		public async Task Test_GetWorkoutsByDate_ShouldSucceed()
 		{
-			var userDtoResponseExpected = new UserDto
+			var expectedUserDto = new UserDto
 			{
-				Id = "29e6d8b3-2275-4acd-a29a-6fe27593d2fd",
-				UserName = "",
-				FirstName = null,
-				LastName = null,
-				Height = null,
-				Gender = null,
-				ActivityLevel = null,
-				BirthDay = null,
+				Id = "b25cbea2-3b57-4400-aef5-52cc035d0fc3",
+				UserName = "joesnow",
+				FirstName = "Joe",
+				LastName = "Snow",
+				Height = 72,
+				Gender = 1,
+				ActivityLevel = 2,
+				BirthDay = DateTime.Parse("1999-05-28T21:00:02.497"),
 				UserMeals = new List<UserMeal>(),
 				UserWeights = new List<UserWeight>(),
 				UserWorkouts = new List<UserWorkout>
 				{
 					new()
 					{
-						UserWorkoutId = "1746fa13-f1b0-4ee5-a44b-d38be3037299",
+						UserWorkoutId = "e4a578e7-ba20-4a88-a0a2-4a2f18fdda10",
 						WorkoutName = "Cardio",
 						WorkoutType = 1,
 						Intensity = 2,
-						Length = 30,
+						Length = 60,
 						WorkoutDate = DateTime.Parse("2023-03-28T21:00:02.497"),
 						CaloriesBurned = 420,
-						ApplicationUserId = "29e6d8b3-2275-4acd-a29a-6fe27593d2fd"
+						ApplicationUserId = "b25cbea2-3b57-4400-aef5-52cc035d0fc3"
 					},
 				}
 			};
-			var userDtoResponseExpectedJson = JsonSerializer.Serialize(userDtoResponseExpected);
-			var userWorkoutsDateFilter = new DateTime(2023, 3, 28).Date.ToString(CultureInfo.InvariantCulture);
+			var expectedUserDtoJson = JsonSerializer.Serialize(expectedUserDto);
+			var userWorkoutsDateFilter = "2023-03-28T00:00:00.0";
 			
-			var handlerMock = new Mock<HttpMessageHandler>();
-			var clientMock = handlerMock.CreateClient();
-			clientMock.BaseAddress = new Uri("https://localhost:7255");
-			handlerMock.SetupRequest(HttpMethod.Get, $"https://localhost:7255/workouts/byDate/{userWorkoutsDateFilter}")
-				.ReturnsResponse(HttpStatusCode.OK, userDtoResponseExpectedJson);
-
-			var workoutsHttpRepository = new WorkoutsHttpRepository(clientMock);
+			var mockHttpMessageHandler = _mockHttpHelper.CreateMessageHandler(
+				new HttpRequest
+				{
+					Method = HttpMethod.Get, 
+					RequestUri = $"/byDate/{userWorkoutsDateFilter}"
+				},
+				new HttpResponse
+				{
+					StatusCode = HttpStatusCode.OK,
+					Response = expectedUserDtoJson
+				});
+			var mockClient = _mockHttpHelper.CreateClient(mockHttpMessageHandler);
+			var workoutsHttpRepository = new WorkoutsHttpRepository(mockClient);
 
 			// Act
-			var userDtoResponseReceived = await workoutsHttpRepository.GetWorkoutsByDate(userWorkoutsDateFilter);
-			var userDtoResponseReceivedJson = JsonSerializer.Serialize(userDtoResponseReceived);
+			var actualUserDto= await workoutsHttpRepository.GetWorkoutsByDate(userWorkoutsDateFilter);
+			var actualUserDtoJson = JsonSerializer.Serialize(actualUserDto);
 			
-			Assert.Equal(userDtoResponseExpectedJson, userDtoResponseReceivedJson);
+			// Assert
+			Assert.Equal(expectedUserDtoJson, actualUserDtoJson);
 		}
 
 		[Fact]
@@ -120,23 +133,28 @@ namespace HealthyHands.Tests.ClientTests.HttpRepository.WorkoutsTests
 			//Arrange
 			var workoutToAdd = new UserWorkoutDto
 			{
-				UserWorkoutId = "",
-				WorkoutName = "Lifting",
+				WorkoutName = "Cardio",
 				WorkoutType = 1,
 				Intensity = 2,
-				Length = 500,
-				WorkoutDate = DateTime.Parse("2023-03-29T21:00:02.497"),
-				CaloriesBurned = 69,
-				ApplicationUserId = ""
+				Length = 60,
+				WorkoutDate = DateTime.Parse("2023-03-28T21:00:02.497"),
+				CaloriesBurned = 420,
+				ApplicationUserId = "b25cbea2-3b57-4400-aef5-52cc035d0fc3"
 			};
 
-			var handlerMock = new Mock<HttpMessageHandler>();
-			var clientMock = handlerMock.CreateClient();
-			clientMock.BaseAddress = new Uri("https://localhost:7255");
-			handlerMock.SetupRequest(HttpMethod.Put, "https://localhost:7255/workouts/add")
-				.ReturnsResponse(HttpStatusCode.OK);
-
-			var workoutsHttpRepository = new WorkoutsHttpRepository(clientMock);
+			var mockHttpMessageHandler = _mockHttpHelper.CreateMessageHandler(
+				new HttpRequest
+				{
+					Method = HttpMethod.Put, 
+					RequestUri = "/add"
+				},
+				new HttpResponse
+				{
+					StatusCode = HttpStatusCode.OK,
+					Response = ""
+				});
+			var mockClient = _mockHttpHelper.CreateClient(mockHttpMessageHandler);
+			var workoutsHttpRepository = new WorkoutsHttpRepository(mockClient);
 
 			//Act
 			var result = await workoutsHttpRepository.AddUserWorkout(workoutToAdd);
@@ -152,24 +170,29 @@ namespace HealthyHands.Tests.ClientTests.HttpRepository.WorkoutsTests
 			// Arrange
 			var workoutToUpdate = new UserWorkoutDto
 			{
-				UserWorkoutId = "1746fa13-f1b0-4ee5-a44b-d38be3037299",
+				UserWorkoutId = "e4a578e7-ba20-4a88-a0a2-4a2f18fdda10",
 				WorkoutName = "Cardio",
 				WorkoutType = 1,
 				Intensity = 2,
-				Length = 30,
+				Length = 60,
 				WorkoutDate = DateTime.Parse("2023-03-28T21:00:02.497"),
 				CaloriesBurned = 420,
-				ApplicationUserId = "29e6d8b3-2275-4acd-a29a-6fe27593d2fd"
+				ApplicationUserId = "b25cbea2-3b57-4400-aef5-52cc035d0fc3"
 			};
-			var workoutToUpdateJson = JsonSerializer.Serialize(workoutToUpdate);
 
-			var handlerMock = new Mock<HttpMessageHandler>();
-			var clientMock = handlerMock.CreateClient();
-			clientMock.BaseAddress = new Uri("https://localhost:7255");
-			handlerMock.SetupRequest(HttpMethod.Put, "https://localhost:7255/workouts/update")
-				.ReturnsResponse(HttpStatusCode.OK);
-
-			var workoutsHttpRepository = new WorkoutsHttpRepository(clientMock);
+			var mockHttpMessageHandler = _mockHttpHelper.CreateMessageHandler(
+				new HttpRequest
+				{
+					Method = HttpMethod.Put, 
+					RequestUri = "/update"
+				},
+				new HttpResponse
+				{
+					StatusCode = HttpStatusCode.OK,
+					Response = ""
+				});
+			var mockClient = _mockHttpHelper.CreateClient(mockHttpMessageHandler);
+			var workoutsHttpRepository = new WorkoutsHttpRepository(mockClient);
 
 			//Act
 			var result = await workoutsHttpRepository.UpdateWorkouts(workoutToUpdate);
@@ -182,15 +205,21 @@ namespace HealthyHands.Tests.ClientTests.HttpRepository.WorkoutsTests
 		public async Task Test_DeleteWorkout_ShouldSucceed()
 		{
 			// Arrange
-			string workoutIdToDelete = "1746fa13-f1b0-4ee5-a44b-d38be3037299";
-
-			var handlerMock = new Mock<HttpMessageHandler>();
-			var clientMock = handlerMock.CreateClient();
-			clientMock.BaseAddress = new Uri("https://localhost:7255");
-			handlerMock.SetupRequest(HttpMethod.Delete, $"https://localhost:7255/workouts/delete/{workoutIdToDelete}")
-				.ReturnsResponse(HttpStatusCode.OK);
-
-			var workoutsHttpRepository = new WorkoutsHttpRepository(clientMock);
+			var workoutIdToDelete = "e4a578e7-ba20-4a88-a0a2-4a2f18fdda109";
+			
+			var mockHttpMessageHandler = _mockHttpHelper.CreateMessageHandler(
+				new HttpRequest
+				{
+					Method = HttpMethod.Delete, 
+					RequestUri = $"/delete/{workoutIdToDelete}"
+				},
+				new HttpResponse
+				{
+					StatusCode = HttpStatusCode.OK,
+					Response = ""
+				});
+			var mockClient = _mockHttpHelper.CreateClient(mockHttpMessageHandler);
+			var workoutsHttpRepository = new WorkoutsHttpRepository(mockClient);
 
 			//Act
 			var result = await workoutsHttpRepository.DeleteWorkout(workoutIdToDelete);

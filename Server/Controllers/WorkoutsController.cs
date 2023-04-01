@@ -27,7 +27,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="workoutsRepository">The workouts repository.</param>
         public WorkoutsController(IWorkoutsRepository workoutsRepository)
         {
-            _workoutsRepository =workoutsRepository;
+            _workoutsRepository = workoutsRepository;
         }
 
         /// <summary>
@@ -50,11 +50,6 @@ namespace HealthyHands.Server.Controllers
                 return BadRequest();
             }
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
             return Ok(user);
         }
 
@@ -64,7 +59,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="date">The date.</param>
         /// <returns>A <see cref="UserDto"/> with workouts</returns>
         [HttpGet]
-        [Route("byDate")]
+        [Route("byDate/{date}")]
         public async Task<ActionResult<UserDto>> GetByWorkoutDate(string date)
         {
             UserDto? user;
@@ -77,11 +72,6 @@ namespace HealthyHands.Server.Controllers
             catch
             {
                 return BadRequest();
-            }
-
-            if (user == null)
-            {
-                return NotFound();
             }
 
             return Ok(user);
@@ -166,7 +156,7 @@ namespace HealthyHands.Server.Controllers
         /// <param name="userWorkoutId">The user workout id.</param>
         /// <returns>An Http Status Code</returns>
         [HttpDelete]
-        [Route("delete")]
+        [Route("delete/{userWorkoutId}")]
         public async Task<ActionResult> DeleteWorkout(string userWorkoutId)
         {
             UserWorkout workoutToDelete = await _workoutsRepository.GetUserWorkoutByUserWorkoutId(userWorkoutId);
@@ -198,6 +188,4 @@ namespace HealthyHands.Server.Controllers
             base.Dispose(disposing);
         }
     }
-
-    
 }

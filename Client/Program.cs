@@ -1,4 +1,5 @@
 using HealthyHands.Client;
+using HealthyHands.Client.HttpRepository.WorkoutsHttpRepository;
 using HealthyHands.Client.HttpRepository.WorkoutsRepository;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;

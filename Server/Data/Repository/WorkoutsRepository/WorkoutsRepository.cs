@@ -16,7 +16,8 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
     /// </summary>
     public class WorkoutsRepository : IWorkoutsRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context; 
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WorkoutsRepository"/> class.
@@ -25,6 +26,7 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         public WorkoutsRepository(ApplicationDbContext context)
         {
             _context = context;
+            _disposed = false;
         }
 
         /// <summary>
@@ -124,23 +126,21 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
         {
             await _context.SaveChangesAsync();
         }
-
-        private bool _disposed = false;
-
+        
         /// <summary>
         /// Logic to dispose the <see cref="ApplicationDbContext"/>.
         /// </summary>
         /// <param name="disposing">If true, disposing.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
                     _context.Dispose();
                 }
             }
-            this._disposed = true;
+            _disposed = true;
         }
 
         /// <summary>

@@ -31,6 +31,8 @@ namespace HealthyHands.Server.Models
                     Height = 72,
                     Gender = 1,
                     ActivityLevel = 1,
+                    WeightGoal = 2,
+                    CalorieGoal = 4000,
                     BirthDay = DateTime.Now
                 },
                 new ApplicationUser {
@@ -57,20 +59,6 @@ namespace HealthyHands.Server.Models
                 RoleId = roles.First(q => q.Name == "Admin").Id
             });
             builder.Entity<IdentityUserRole<string>>().HasData(userRoles);
-
-            ////Seed Workouts
-            //List<UserWorkout> workouts = new List<UserWorkout>()
-            //{
-            //    new UserWorkout { 
-            //        UserWorkoutId = "test1",
-            //        WorkoutName = "Cardio",
-            //        WorkoutType = 1,
-            //        Intensity = 1,
-            //        Length = 20,
-            //        WorkoutDate = DateTime.Now,
-                
-            //    }
-            //}; builder.Entity<UserWorkout>().HasData(workouts);
         }
     }
 }
