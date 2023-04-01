@@ -3,38 +3,61 @@
 <PageTitle>Workouts</PageTitle>
 
 <h1>Workouts</h1>
+<label for="workoutname">Workout Name:</label>
+<input id="workoutname" type="text" @bind="newWorkoutName" />
 
-@if(User == null)
+<label for="workouttype">Workout Type:</label>
+<input id="workouttype" type="number" @bind="newWorkoutType" />
+
+<label for="intensity">Intensity:</label>
+<input id="intensity" type="number" @bind="newIntensity" />
+
+<label for="length">Length:</label>
+<input id="length" type="number" @bind="newLength" />
+
+<label for="workoutdate">Date:</label>
+<input id="workoutdate" type="date" @bind="newWorkoutDate" />
+
+<label for="caloriesburned">Calories Burned:</label>
+<input id="caloriesburned" type="number" @bind="newCaloriesBurned" />
+
+@if (User == null)
 {
-	<p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Workout Name</th>
-				<th>Workout Type</th>
-				<th>Intensity</th>
-				<th>Length</th>
-				<th>Workout Date</th>				
-				<th>Calories Burned</th>
-			</tr>
-		</thead>
-		@foreach (var u in User.UserWorkouts)
-		{
-			<tbody>
-				<tr>
-					<td>@u.WorkoutName</td>
-					<td>@u.WorkoutType</td>
-					<td>@u.Intensity</td>
-					<td>@u.Length</td>
-					<td>@u.WorkoutDate</td>
-					<td>@u.CaloriesBurned</td>
-				</tr>
-			</tbody>
-		}
-		@* <!-- <button class="button" @onclick="UpdateWorkouts()">Add Workout</button> --> *@
-		
-	</table>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Workout Name</th>
+            <th>Workout Type</th>
+            <th>Intensity</th>
+            <th>Length</th>
+            <th>Workout Date</th>
+            <th>Calories Burned</th>
+        </tr>
+        </thead>
+        @foreach (var u in User.UserWorkouts)
+        {
+            <tbody>
+            <tr>
+                <td>@u.WorkoutName</td>
+                <td>@u.WorkoutType</td>
+                <td>@u.Intensity</td>
+                <td>@u.Length</td>
+                <td>@u.WorkoutDate.Date.ToString("MM-dd-yyyy")</td>
+                <td>@u.CaloriesBurned</td>
+                <td><button @onclick="()=>DeleteWorkout(u.UserWorkoutId)">Delete</button></td>
+                <td><button @onclick="()=>UpdateWorkout(u.UserWorkoutId)">Update</button>
+                    <i class="oi oi-pencil"></i>	
+                </td>
+            </tr>
+            </tbody>
+        }
+        <button class="button" @onclick="()=> AddWorkout()">Add Workout</button>
+
+    </table>
+
+    <hr />
 }
