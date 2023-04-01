@@ -39,7 +39,7 @@ namespace HealthyHands.Client.HttpRepository.MealHttpRepository
         /// <returns>meals</returns>
         public async Task<UserDto> GetMealsByDate(string date)
         {
-            UserDto meals = await _httpClient.GetFromJsonAsync<UserDto>("meals/byDate/{date:string}");
+            UserDto meals = await _httpClient.GetFromJsonAsync<UserDto>($"meals/byDate/{date}");
             return meals;
         }
         /// <summary>
