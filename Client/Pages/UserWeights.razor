@@ -11,7 +11,14 @@
 <input id="weightDate" type="date" @bind="newWeightDate" />
 <label for="weight">Weight:</label>
 <button @onclick="() => AddWeight() ">Add</button>
+<style>
+    .warning {
+        color: red;
+        font-weight: bold;
+    }
+</style>
 
+<div class="warning">@warningMessage</div>
 @if (User == null)
 {
     <p><em>Loading...</em></p>
@@ -27,7 +34,7 @@ else
             </tr>
         </thead>
 
-        @foreach (var weight in User.UserWeights)
+        @foreach (var weight in User.UserWeights.OrderBy(w => w.WeightDate))
         {
             <tbody>
                 <tr>

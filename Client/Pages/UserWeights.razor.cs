@@ -7,6 +7,7 @@ using System.Threading;
 
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Timers;
 
 namespace HealthyHands.Client.Pages
 {
@@ -32,8 +33,9 @@ namespace HealthyHands.Client.Pages
         public NavigationManager navigationManager { get; set; }
         public UserWeightDto UserWeightDto { get; set; } = new();
         public UserDto User { get; set; } = new();
+        private string warningMessage = "";
 
-       
+
         protected override async Task OnInitializedAsync()
         {
             var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
@@ -59,77 +61,64 @@ namespace HealthyHands.Client.Pages
   
         }
 
- 
+
 
         private async Task AddWeight()
         {
-            //if (newWeight <= 0)
-            //{
-            //    // Display a warning message to the user
-            //    Console.WriteLine(" Weight must be greater than 0");
-
-            //}
-            //else if (newWeightDate > DateTime.Today)
-            //{
-            //    // Display a warning message to the user
-            //    Console.WriteLine(" Weight date cannot be in the future");
-            //}
-            //else if (newWeightDate < DateTime.Today)
-            //{
-            //    // Display a warning message to the user
-            //}
-            //else
-            //{
-                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-                var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-                var userWeightDto = new UserWeightDto
-                {
-                    Weight = newWeight,
-                    WeightDate = newWeightDate,
-                    ApplicationUserId = userId
-                };
-
-                var result = await WeightHttpRepository.AddWeight(userWeightDto);
-
-                //// Reset the input fields
-                //newWeight = 0;
-                //newWeightDate = DateTime.Today;
-
-                // Update the table data
-                //var userWeight = new UserWeight
-                //{
-                //    Weight = userWeightDto.Weight,
-                //    WeightDate = userWeightDto.WeightDate,
-                //    ApplicationUserId = userWeightDto.ApplicationUserId
-                //};
-               // User.UserWeights.Add(userWeight);
-                StateHasChanged();
+            // Check if there is already an existing weight entry with the same date and time
+            var existingWeight = User.UserWeights.FirstOrDefault(w => w.WeightDate == newWeightDate);
+            if (existingWeight != null)
+            {
+                // Display a warning message to the user
+                warningMessage = "Cannot add the same weight on the same day at the same time";
+                return;
             }
-  //     }
+            var previousWeight = User.UserWeights.OrderByDescending(w => w.WeightDate).FirstOrDefault();
+            if (previousWeight != null && Math.Abs(newWeight - previousWeight.Weight) > 100)
+            {
+                // Display a warning message to the user
+                warningMessage = "Weight cannot differ from the previous weight by more than 100";
+                return;
+            }
+            // Check if newWeightDate is in the future
+            if (newWeightDate > DateTime.Today)
+            {
+                // Display a warning message to the user
+                warningMessage = "Weight date cannot be in the future";
+                return;
+            }
+
+            // Your validation code here
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var userWeightDto = new UserWeightDto
+            {
+                Weight = newWeight,
+                WeightDate = newWeightDate,
+                ApplicationUserId = userId
+            };
+
+            var result = await WeightHttpRepository.AddWeight(userWeightDto);
+            warningMessage = "";
+
+            // Fetch updated data from server
+            await FetchData();
+
+            StateHasChanged();
+        }
+        private async Task FetchData()
+        {
+            // Fetch updated data from server
+            var userDto = await WeightHttpRepository.GetWeights();
+
+            // Update User.UserWeights with the updated data
+            User.UserWeights = userDto.UserWeights;
+        }
 
 
-        //private async Task UpdateWeight()
-        //{
-        //    var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        //    var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        //    var userWeightDto = new UserWeightDto
-        //    {
-        //        Weight = newWeight,
-        //        WeightDate = newWeightDate,
-        //        ApplicationUserId = userId
-        //    };
-
-        //    var result = await WeightHttpRepository.UpdateWeight(userWeightDto);
-
-        //    if (result)
-        //    {
-        //        await LoadChartData();
-        //        StateHasChanged();
-        //    }
-        //}
-
+        
         private async Task Delete(string userWeightId)
         {
             var result = await WeightHttpRepository.DeleteWeight(userWeightId);
