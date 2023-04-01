@@ -1,20 +1,26 @@
-﻿// Filename: UserWorkout.cs
+﻿// Filename: UserWorkoutDto.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HealthyHands.Shared.Models
 {
     /// <summary>
-    /// The user workout model.
+    /// The user workout dto.
     /// </summary>
-    public class UserWorkout
+    public class UserWorkoutDto
     {
         /// <summary>
         /// Gets or sets the user workout id.
         /// </summary>
-        public string UserWorkoutId { get; set; }
+        public string UserWorkoutId { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets the workout name.
         /// </summary>
-        public string WorkoutName { get; set; }
+        public string WorkoutName { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets the workout type.
         /// </summary>
@@ -22,11 +28,11 @@ namespace HealthyHands.Shared.Models
         /// <summary>
         /// Gets or sets the intensity.
         /// </summary>
-        public int Intensity { get; set; }
+        public int Intensity { get; set; } = 0;
         /// <summary>
         /// Gets or sets the length.
         /// </summary>
-        public int Length { get; set; }
+        public int Length { get; set; } = 0;
         /// <summary>
         /// Gets or sets the workout date.
         /// </summary>
@@ -34,11 +40,10 @@ namespace HealthyHands.Shared.Models
         /// <summary>
         /// Gets or sets the calories burned.
         /// </summary>
-        public int? CaloriesBurned { get; set; }
+        public int CaloriesBurned { get; set; }
         /// <summary>
         /// Gets or sets the application user id.
         /// </summary>
-        public string ApplicationUserId { get; set; }
-
+        public string? ApplicationUserId { get; set; } = string.Empty;
     }
 }
