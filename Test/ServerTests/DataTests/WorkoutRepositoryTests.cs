@@ -12,7 +12,7 @@ using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Options;
 using HealthyHands.Server.Models;
 
-namespace HealthyHands.Tests.WorkoutsRepositoryTests
+namespace HealthyHands.Tests.ServerTests.DataTests
 {
     public class WorkoutRepositoryTests : IDisposable
     {
@@ -232,7 +232,7 @@ namespace HealthyHands.Tests.WorkoutsRepositoryTests
         }
 
         [Fact]
-        public async Task DeleteUserWorkou_DeletessWorkout()
+        public async Task DeleteUserWorkout_DeletesWorkout()
         {
             // Arrange
             var newWorkout = new UserWorkout
