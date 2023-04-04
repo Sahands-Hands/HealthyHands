@@ -1,13 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HealthyHands.Client.Pages;
+using HealthyHands.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthyHands.Server.Models
 {
     public static class ModelBuilderExtensions
     {
+        /// <summary>
+        /// Seeds the database.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
         public static void Seed(this ModelBuilder builder)
-        {             // Seed Roles
-            List<IdentityRole> roles = new List<IdentityRole>()
+        { 
+            List<IdentityRole> roles = new List<IdentityRole>()
             {
                 new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
                 new IdentityRole { Name = "User", NormalizedName = "USER" }
@@ -59,10 +65,10 @@ namespace HealthyHands.Server.Models
                     LastName = "User"
                 }
             }; builder.Entity<ApplicationUser>().HasData(users);
-            ///----------------------------------------------------
-            // Seed UserRoles
-            List<IdentityUserRole<string>> userRoles = new List<IdentityUserRole<string>>();             // Add Password For All Users
-            users[0].PasswordHash = passwordHasher.HashPassword(users[0], "P@55w0rd");
+
+            // Seed UserRoles
+            List<IdentityUserRole<string>> userRoles = new List<IdentityUserRole<string>>();  // Add Password For All Users
+            users[0].PasswordHash = passwordHasher.HashPassword(users[0], "P@55w0rd");
             users[1].PasswordHash = passwordHasher.HashPassword(users[1], "P@55w0rd");
             users[2].PasswordHash = passwordHasher.HashPassword(users[2], "P@55w0rd");
             userRoles.Add(new IdentityUserRole<string>
