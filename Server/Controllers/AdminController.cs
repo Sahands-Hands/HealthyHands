@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyHands.Server.Controllers;
 
-[Authorize(Roles = "Admin")]
+// [Authorize(Roles = "Admin")]
 [Route("admin")]
 public class AdminController : Controller
 {
@@ -27,7 +27,7 @@ public class AdminController : Controller
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            Console.WriteLine("Here is the exception: {0}", e.ToString());
             return BadRequest(userDtoList);
         }
 
@@ -62,7 +62,7 @@ public class AdminController : Controller
     }
 
     [HttpPut]
-    [Route("role/admin")]
+    [Route("role/admin/{userId}")]
     public async Task<ActionResult> SetUserRoleAdmin(string userId)
     {
         if (!await _adminRepository.UserExists(userId))

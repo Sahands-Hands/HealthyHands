@@ -27,7 +27,7 @@ namespace HealthyHands.Client.HttpRepository.AdminHttpRepository
 
         public async Task<bool> SetUserRoleAdmin(string userId)
         { 
-            var response = await _httpClient.PutAsJsonAsync("admin/role/admin", userId);
+            var response = await _httpClient.PutAsJsonAsync($"admin/role/admin/{userId}", userId);
             
             return response.IsSuccessStatusCode;
         }

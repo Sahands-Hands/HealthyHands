@@ -23,9 +23,21 @@ public class AdminRepository : IAdminRepository
     {
         List<UserDto> usersDtoList = new List<UserDto>();
         var usersList = await _userManager.Users.Select(u => u).ToListAsync();
+        var adminRole = await _context.Roles.Select(ur => new {Id = ur.Id, Name = ur.Name}).FirstOrDefaultAsync(ur => ur.Name == "Admin");
+        
+        Console.WriteLine("Here is the admin role: Id = {0}, Name = {1}", adminRole.Id, adminRole.Name);
         foreach (var u in usersList)
         {
-            var isAdmin = await _userManager.IsInRoleAsync(u, "Admin");
+            IdentityUserRole<string>? userRole = new IdentityUserRole<string>();
+            userRole = await _context.UserRoles.Select(ur => ur)
+                .FirstOrDefaultAsync(ur => ur.UserId == u.Id);
+            Console.WriteLine("Yeet");
+            var isAdmin = false;
+            if (userRole != null)
+            {
+                isAdmin = userRole.RoleId.Equals(adminRole.Id);
+            }
+            
             usersDtoList.Add(
                 new UserDto
                 {
