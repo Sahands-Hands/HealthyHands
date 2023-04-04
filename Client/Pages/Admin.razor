@@ -12,10 +12,9 @@ else
             <thead>
                 <tr>
                     <th>First Name</th>
-                    <th>Last Name</th>
                     <th>Admin</th>
-                    <th>PromoteToAdmin</th>
                     <th>Locked Out</th>
+                    <th>Lockout User</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,10 +22,9 @@ else
             {
                 <tr>
                     <td>@user.FirstName</td>
-                    <td>@user.LastName</td>
                     <td>@user.IsAdmin</td>
-                    <td><button class="btn btn-primary" @onclick="() => PromoteToAdmin(@user.Id)">Promote</button></td>
                     <td>@user.LockoutEnabled</td>
+                    <td><button @onclick="() => LockoutUser(user.Id)">Lockout</button></td>
                 </tr>
             }
             </tbody>

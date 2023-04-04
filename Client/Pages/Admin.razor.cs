@@ -49,19 +49,72 @@ namespace HealthyHands.Client.Pages
             {
                 Console.WriteLine("Failed");
             }
-        
         }
         
-        private void Edit(string userWeightId)
+        private async Task DemoteToUser(string userId)
         {
-            var weightToEdit = User.UserWeights.FirstOrDefault(w => w.UserWeightId == userWeightId);
-            if (weightToEdit != null)
+            var currentUserId = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
+            Console.WriteLine("CurrentUserID: {0}", currentUserId);
+            var success = await AdminHttpRepository.SetUserRoleUser(userId);
+            if (success)
             {
-                editingWeightId = weightToEdit.UserWeightId;
-                editingWeight = weightToEdit.Weight;
-                editingWeightDate = weightToEdit.WeightDate;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Failed");
             }
         }
+
+        private async Task LockoutUser(string userId)
+        {
+            var success = await AdminHttpRepository.LockoutUser(userId);
+            if (success)
+            {
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Failed");
+            }
+        }
+        
+        private async Task UnlockUser(string userId)
+        {
+            var success = await AdminHttpRepository.UnlockUser(userId);
+            if (success)
+            {
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Failed");
+            }
+        }
+        
+        private async Task ResetPassword(string userId)
+        {
+            var success = await AdminHttpRepository.ResetUserPassword(userId);
+            if (success)
+            {
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Failed");
+            }
+        }
+        
+        // private void Edit(string userWeightId)
+        // {
+        //     var weightToEdit = User.UserWeights.FirstOrDefault(w => w.UserWeightId == userWeightId);
+        //     if (weightToEdit != null)
+        //     {
+        //         editingWeightId = weightToEdit.UserWeightId;
+        //         editingWeight = weightToEdit.Weight;
+        //         editingWeightDate = weightToEdit.WeightDate;
+        //     }
+        // }
     }
 }
 

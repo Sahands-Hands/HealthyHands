@@ -10,12 +10,14 @@ public class AdminRepository : IAdminRepository
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private bool _disposed;
 
-    public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         _context = context;
         _userManager = userManager;
+        _roleManager = roleManager;
         _disposed = false;
     }
 
@@ -31,7 +33,6 @@ public class AdminRepository : IAdminRepository
             IdentityUserRole<string>? userRole = new IdentityUserRole<string>();
             userRole = await _context.UserRoles.Select(ur => ur)
                 .FirstOrDefaultAsync(ur => ur.UserId == u.Id);
-            Console.WriteLine("Yeet");
             var isAdmin = false;
             if (userRole != null)
             {
@@ -62,8 +63,15 @@ public class AdminRepository : IAdminRepository
     public async Task LockoutUser(string userId)
     {
         var userToLockout = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
-        userToLockout.LockoutEnabled = true;
-        _context.Users.Update(userToLockout);
+        await _userManager.SetLockoutEnabledAsync(userToLockout, true);
+        await _userManager.SetLockoutEndDateAsync(userToLockout, DateTimeOffset.MaxValue);
+    }
+
+    public async Task UnlockUser(string userId)
+    {
+        var userToUnlock = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+        await _userManager.SetLockoutEnabledAsync(userToUnlock, false);
+        await _userManager.SetLockoutEndDateAsync(userToUnlock, DateTimeOffset.Now);
     }
 
     public async Task ResetUserPassword(string userId)
@@ -73,30 +81,29 @@ public class AdminRepository : IAdminRepository
         await _userManager.ResetPasswordAsync(userToResetPassword, passwordResetCode, "2rx9j=Ik*BctHQ=");
     }
 
+    // public async Task ChangeUserRoleToAdmin(string userId)
+    // {
+    //     var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
+    //     var oldRoleId = await _userManager.GetRolesAsync(oldUser);
+    //     var oldRoleName = await _context.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
+    //
+    //     if (oldRoleName.Name != "Admin")
+    //     {
+    //         await _userManager.RemoveFromRoleAsync(oldUser, oldRoleName.Name);
+    //         await _userManager.AddToRoleAsync(oldUser, "Admin");
+    //     }
+    // }
+    
     public async Task ChangeUserRoleToAdmin(string userId)
     {
-        var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
-        var oldRoleId = await _userManager.GetRolesAsync(oldUser);
-        var oldRoleName = await _context.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
-
-        if (oldRoleName.Name != "Admin")
-        {
-            await _userManager.RemoveFromRoleAsync(oldUser, oldRoleName.Name);
-            await _userManager.AddToRoleAsync(oldUser, "Admin");
-        }
+        var oldUser = await _userManager.FindByIdAsync(userId);
+        await _userManager.AddToRoleAsync(oldUser, "admin");
     }
 
     public async Task ChangeUserRoleToUser(string userId)
     {
-        var oldUser = await _userManager.Users.Select(u => u).FirstOrDefaultAsync(u => u.Id == userId);
-        var oldRoleId = await _userManager.GetRolesAsync(oldUser);
-        var oldRoleName = await _context.Roles.SingleOrDefaultAsync(r => r.Id == oldRoleId[0]);
-
-        if (oldRoleName.Name != "User")
-        {
-            await _userManager.RemoveFromRoleAsync(oldUser, oldRoleName.Name);
-            await _userManager.AddToRoleAsync(oldUser, "User");
-        }
+        var oldUser = await _userManager.FindByIdAsync(userId);
+        await _userManager.RemoveFromRoleAsync(oldUser, "admin");
     }
 
     public async Task Save()
@@ -116,6 +123,7 @@ public class AdminRepository : IAdminRepository
             {
                 _context.Dispose();
                 _userManager.Dispose();
+                _roleManager.Dispose();
             }
         }
 

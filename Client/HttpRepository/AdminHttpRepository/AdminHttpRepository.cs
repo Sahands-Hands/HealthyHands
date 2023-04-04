@@ -24,10 +24,17 @@ namespace HealthyHands.Client.HttpRepository.AdminHttpRepository
             
             return response.IsSuccessStatusCode;
         }
+        
+        public async Task<bool> UnlockUser(string userId)
+        { 
+            var response = await _httpClient.PutAsJsonAsync("admin/unlock", userId);
+            
+            return response.IsSuccessStatusCode;
+        }
 
         public async Task<bool> SetUserRoleAdmin(string userId)
         { 
-            var response = await _httpClient.PutAsJsonAsync($"admin/role/admin/{userId}", userId);
+            var response = await _httpClient.PutAsJsonAsync("admin/role/admin", userId);
             
             return response.IsSuccessStatusCode;
         }

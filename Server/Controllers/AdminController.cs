@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyHands.Server.Controllers;
 
-// [Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin")]
 [Route("admin")]
 public class AdminController : Controller
 {
@@ -41,7 +41,7 @@ public class AdminController : Controller
     
     [HttpPut]
     [Route("lockout")]
-    public async Task<ActionResult> LockoutUser(string userId)
+    public async Task<ActionResult> LockoutUser([FromBody] string userId)
     {
         if (!await _adminRepository.UserExists(userId))
         {
@@ -60,10 +60,32 @@ public class AdminController : Controller
         
         return Ok();
     }
+    
+    [HttpPut]
+    [Route("unlock")]
+    public async Task<ActionResult>UnlockUser([FromBody] string userId)
+    {
+        if (!await _adminRepository.UserExists(userId))
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            await _adminRepository.UnlockUser(userId);
+            await _adminRepository.Save();
+        }
+        catch
+        {
+            return BadRequest();
+        }
+        
+        return Ok();
+    }
 
     [HttpPut]
-    [Route("role/admin/{userId}")]
-    public async Task<ActionResult> SetUserRoleAdmin(string userId)
+    [Route("role/admin")]
+    public async Task<ActionResult> SetUserRoleAdmin([FromBody] string userId)
     {
         if (!await _adminRepository.UserExists(userId))
         {
@@ -85,7 +107,7 @@ public class AdminController : Controller
 
     [HttpPut]
     [Route("role/user")]
-    public async Task<ActionResult> SetUserRoleUser(string userId)
+    public async Task<ActionResult> SetUserRoleUser([FromBody] string userId)
     {
         if (!await _adminRepository.UserExists(userId))
         {
@@ -107,7 +129,7 @@ public class AdminController : Controller
 
     [HttpPut]
     [Route("reset")]
-    public async Task<ActionResult> ResetUserPassword(string userId)
+    public async Task<ActionResult> ResetUserPassword([FromBody] string userId)
     {
         if (!await _adminRepository.UserExists(userId))
         {
