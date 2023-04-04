@@ -15,11 +15,11 @@
 }
 else
 {
-    <RadzenGrid @ref="grid" AllowSorting="true" Data="@User.UserWeights" AllowFiltering='true' FilterMode="Radzen.FilterMode.Advanced" >
+    <RadzenGrid @ref="grid" AllowSorting="true" Data="@User.UserWeights" AllowFiltering="true" FilterMode="Radzen.FilterMode.Advanced">
         <Columns>
-            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="WeightDate" Filterable="true"  Title="Date"/>
-            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight" Filterable="false"   />
-            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Context="weight">
+            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="WeightDate" Filterable="true" Sortable="true" Title="Date" />
+            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight" Filterable="false" Sortable="true"/>
+            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Context="weight" Filterable="false" Sortable ="false" Width="2" >
                 <Template>
                     @{
                         if (weight.UserWeightId.Equals(0) || weight.UserWeightId.Equals(editingWeightId))
