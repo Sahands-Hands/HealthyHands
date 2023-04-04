@@ -15,10 +15,10 @@
 }
 else
 {
-    <RadzenGrid @ref="grid" AllowSorting="true" Data="@User.UserWeights">
+    <RadzenGrid @ref="grid" AllowSorting="true" Data="@User.UserWeights" AllowFiltering='true' FilterMode="Radzen.FilterMode.Advanced" >
         <Columns>
-            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="WeightDate" Title="Date" />
-            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight" />
+            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="WeightDate" Filterable="true"  Title="Date"/>
+            <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight" Filterable="false"   />
             <RadzenGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Context="weight">
                 <Template>
                     @{
@@ -27,17 +27,17 @@ else
                             <div style="display: flex; justify-content: center;">
                                 <RadzenDatePicker @bind-Value="@editingWeightDate" />
                                 <RadzenNumeric @bind-Value="@editingWeight" style="margin-left: 10px; margin-right: 10px;" />
-                                <RadzenButton Click="() => Save(weight.UserWeightId)" style="margin-left: 10px; margin-right: 5px;" Icon="check" />
+                                <RadzenButton Click="() => Save(weight.UserWeightId)" style="margin-left: 10px; margin-right: 5px;" Icon="check" ButtonStyle="Radzen.ButtonStyle.Success" />
                                 @if (!weight.UserWeightId.Equals(0))
                                 {
-                                    <RadzenButton Click="() => DeleteWeight(weight.UserWeightId)" Icon="delete" />
+                                    <RadzenButton Click="() => DeleteWeight(weight.UserWeightId)" Icon="delete" ButtonStyle="Radzen.ButtonStyle.Danger" />
                                 }
                             </div>
                         }
                         else
                         {
                             <div style="display: flex; justify-content: center;">
-                                <RadzenButton Click="() => Edit(weight.UserWeightId)" Icon="edit" />
+                                <RadzenButton Click="() => Edit(weight.UserWeightId)" Icon="edit" ButtonStyle="Radzen.ButtonStyle.Light" />
                             </div>
                         }
                     }
@@ -45,11 +45,14 @@ else
             </RadzenGridColumn>
         </Columns>
     </RadzenGrid>
+
+
+
     @if (showInputForm)
     {
         <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
             <div style="flex: 1; margin-right: 10px;">
-                <RadzenDatePicker @bind-Value="@newWeightDate" style="width: 100%;" />
+                <RadzenDatePicker @bind-Value="@newWeightDate" style="width: 100%;"  />
             </div>
             <div style="flex: 1; position: relative;">
                 <RadzenNumeric @bind-Value="@newWeight.Weight" style="width: 100%;" />
@@ -59,15 +62,15 @@ else
                 }
             </div>
             <div style="display: flex; align-items: center;">
-                <RadzenButton Click="AddWeight" style="margin-right: 5px;" Icon="check" />
-                <RadzenButton Click="Cancel" Icon="cancel" />
+                <RadzenButton Click="AddWeight" style="margin-right: 5px;" Icon="check" ButtonStyle="Radzen.ButtonStyle.Success" />
+                <RadzenButton Click="Cancel" Icon="cancel" ButtonStyle=" Radzen.ButtonStyle.Warning" />
             </div>
         </div>
     }
     else
     {
         <div style="margin-top: 10px; display: flex; justify-content: center;">
-            <RadzenButton Text="Add New" Click="@addNewRow" />
+            <RadzenButton Text="Add New Weight" Click="@addNewRow" Icon="add_circle_outline" ButtonStyle="Radzen.ButtonStyle.Success" />
         </div>
     }
 }

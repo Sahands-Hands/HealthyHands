@@ -22,6 +22,8 @@ namespace HealthyHands.Client.Pages
         private DateTime editingWeightDate;
         RadzenGrid<UserWeight> grid;
         bool showInputForm = false;
+      
+
 
 
         [Inject]
@@ -65,6 +67,30 @@ namespace HealthyHands.Client.Pages
             else
             {
                 warningMessage = "";
+            }
+            if (newWeightDate > DateTime.Today)
+            {
+                warningMessage = "You cannot input a weight for the future.";
+                return;
+            }
+
+            // Check if the weight date is for the same day and the time is before 6 AM
+            if (newWeightDate.Date == DateTime.Now.Date && newWeightDate.Hour == DateTime.Now.Hour)
+            {
+                warningMessage = "You cannot input a weight for the same hour of the same day.";
+                return;
+            }
+            if (newWeight.Weight > 2000)
+            {
+                warningMessage = "Weight cannot be greater than 2000 pounds.";
+                return;
+            }
+
+            var latestWeight = User.UserWeights.OrderByDescending(w => w.WeightDate).FirstOrDefault();
+            if (latestWeight != null && newWeight.Weight - latestWeight.Weight > 100)
+            {
+                warningMessage = "Weight cannot be increased by more than 100 pounds per day.";
+                return;
             }
 
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
