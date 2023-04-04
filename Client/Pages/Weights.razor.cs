@@ -8,6 +8,8 @@ using System.Security.Claims;
 
 
 
+
+
 namespace HealthyHands.Client.Pages
 {
     public partial class Weights

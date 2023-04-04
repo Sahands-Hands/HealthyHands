@@ -1,0 +1,68 @@
+﻿.rz-message {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #fff;
+    background-color: #ff0000;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.3);
+    animation: pulse 1.5s;
+    width: 100%;
+    margin-top: 5px;
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.rz-button .rz-icon {
+    font-family: 'RadzenIcons';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.rz-icon-check:before {
+    content: "\e900";
+}
+
+.rz-icon-delete:before {
+    content: "\e901";
+}
+
+.rz-icon-cancel:before {
+    content: "\e902";
+}
+
+.rz-icon-edit:before {
+    content: "\e903";
+}
+
+.rz-icon-check {
+    color: green;
+}
+
+.rz-icon-delete {
+    color: red;
+}
+
+.rz-icon-cancel {
+    color: blue;
+}
+
+.rz-icon-edit {
+    color: orange;
+}
