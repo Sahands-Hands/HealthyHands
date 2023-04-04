@@ -24,11 +24,11 @@ namespace HealthyHands.Tests.ServerTests.DataTests
         public WorkoutRepositoryTests()
         {
             // Set up a new ApplicationDbContext and WorkoutsRepository for each test
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            _options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-            var operationalStoreOptions = Options.Create(new OperationalStoreOptions());
-            _context = new ApplicationDbContext(options, operationalStoreOptions);
+            _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
+            _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new WorkoutsRepository(_context);
         }
 
