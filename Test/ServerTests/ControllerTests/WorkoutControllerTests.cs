@@ -262,7 +262,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         public async Task DeleteWorkout_DeletesAddedWorkout()
         {
             // Arrange
-            var newUser = new ApplicationUser { Id = "update_user", UserName = "example name" };
+            var newUser = new ApplicationUser { Id = "delete_user", UserName = "example name" };
             var deletableWorkout = new UserWorkoutDto
             {
                 UserWorkoutId = "Workout 7",
