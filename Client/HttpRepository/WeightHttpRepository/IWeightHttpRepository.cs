@@ -1,16 +1,19 @@
 ﻿using HealthyHands.Shared.Models;
 
-public interface IWeightHttpRepository
+namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
 {
-    Task<UserDto> GetWeights();
+    public interface IWeightHttpRepository
+    {
+        Task<UserDto> GetWeights();
 
-    Task<UserDto> GetWeightsByWeightDate();
+        Task<UserDto> GetWeightsByWeightDate();
 
-    Task<bool> AddWeight(UserWeightDto userWeightDto);
+        Task<bool> AddWeight(UserWeightDto userWeightDto);
 
-    Task<bool> UpdateWeight(UserWeightDto userWeightDto);
+        Task<bool> UpdateWeight(UserWeightDto userWeightDto);
 
-    Task<bool> DeleteWeight(string userWeightDto);
+        Task<bool> DeleteWeight(string userWeightDto);
 
 
+    }
 }

@@ -1,6 +1,4 @@
-﻿using HealthyHands.Client.HttpRepository.UserRepository;
-using HealthyHands.Client.HttpRepository.WeightHttpRepository;
-using HealthyHands.Shared.Models;
+﻿using HealthyHands.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -12,14 +10,14 @@ namespace HealthyHands.Client.Pages
     {
         [Inject] HttpClient HttpClient { get; set; }
         [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-        [Inject] IWeightHttpRepository WeightHttpRepository { get; set; }
-        [Inject] IUserHttpRepository UserHttpRepository { get; set; }
+        [Inject] HttpRepository.WeightHttpRepository.IWeightHttpRepository WeightHttpRepository { get; set; }
+        [Inject] HttpRepository.UserRepository.IUserHttpRepository UserHttpRepository { get; set; }
 
         public UserDto User { get; set; } = new();
         public string Goal { get; set; } = "maintain";
         public double Calories { get; set; }
-
-        public UserWeightDto[] Weights { get; set; }
+        public string Message { get; set; } = "Awaiting Weight Goal";
+        public string CalorieMessage { get; set; } = "";
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,7 +27,6 @@ namespace HealthyHands.Client.Pages
                 try
                 {
                     User = await UserHttpRepository.GetUserInfo();
-                    Weights = await WeightHttpRepository.GetWeights();
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
@@ -38,17 +35,41 @@ namespace HealthyHands.Client.Pages
             }
         }
 
-        //public void CalculateCalories()
-        //{
-        //    int gender = User.Gender;
-        //    int weight = User.Weight;
-        //    int height = User.Height;
-        //    DateTime? birthDay = User.BirthDate;
-        //    int age = GetAge(birthDay);
-        //    Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
-        //}
+        public void CalculateCalories()
+        {
+            int weightLength = User.UserWeights.Count;
+            int gender = (int)User.Gender;
+            //double weight = User.UserWeights.ElementAt<UserWeight>(weightLength - 1).Weight;
+            double weight = 100;
+            int height = (int)User.Height;
+            DateTime? birthDay = User.BirthDay;
+            int age = (int)GetAge(birthDay);
+            Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
+        }
 
-        private double CalculateRecommendedCalories(int gender, int weight, int height, int age, string goal)
+        public void MaintainWeight()
+        {
+            Goal = "maintain";
+            CalculateCalories();
+            Message = $"Your desired goal is to {Goal} weight";
+            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        }
+        public void GainWeight()
+        {
+            Goal = "gain";
+            CalculateCalories();
+            Message = $"Your desired goal is to {Goal} weight";
+            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        }
+        public void LoseWeight()
+        {
+            Goal = "lose";
+            CalculateCalories();
+            Message = $"Your desired goal is to {Goal} weight";
+            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        }
+
+        private double CalculateRecommendedCalories(int gender, double weight, int height, int age, string goal)
         {
             double heightCm = height * 2.54;
             double weightKg = weight * 0.453;

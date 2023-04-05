@@ -11,21 +11,11 @@
 }
 else
 {
-    <form>
-        <div class="form-group">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="goal-maintain" value="maintain" checked @bind="Goal" />
-                <label class="form-check-label" for="goal-maintain">Maintain Weight</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="goal-lose" value="lose" @bind="Goal" />
-                <label class="form-check-label" for="goal-lose">Lose Weight</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" id="goal-gain" value="gain" @bind="Goal" />
-                <label class="form-check-label" for="goal-gain">Gain Weight</label>
-            </div>
-        </div>
-        <button class="btn btn-primary" @onclick="CalculateCalories">Calculate Calories</button>
-    </form>
+    <button class="btn btn-primary" type="button" @onclick="MaintainWeight" >Maintain Weight</button>
+    <button class="btn btn-primary" type="button" @onclick="LoseWeight" >Lose Weight</button>
+    <button class="btn btn-primary" type="button" @onclick="GainWeight" >Gain Weight</button>
+    <div>
+        <h3>@Message</h3>
+        <h3>@CalorieMessage</h3>
+    </div>
 }
