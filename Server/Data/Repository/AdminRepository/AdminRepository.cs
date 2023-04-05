@@ -43,6 +43,7 @@ public class AdminRepository : IAdminRepository
                 new UserDto
                 {
                     Id = u.Id,
+                    UserName = u.UserName,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     IsAdmin = isAdmin,
