@@ -44,6 +44,9 @@ namespace HealthyHands.Client.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject]
         IMealsHttpRepository MealsHttpRepository { get; set; }
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         public UserDto User { get; set; } = new();
         public UserMealDto UserMeal { get; set; } = new();
 
@@ -61,6 +64,14 @@ namespace HealthyHands.Client.Pages
                 {
                     exception.Redirect();
                 }
+            }
+            else
+            {
+                // Redirect the user to the default weight feature page
+
+                NavigationManager.NavigateTo("/defaultusermeals");
+
+
             }
         }
 
