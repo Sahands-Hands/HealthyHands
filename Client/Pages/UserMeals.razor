@@ -13,8 +13,8 @@
 else
 {
     <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Meal" Click="@InsertRow" Disabled=@(mealsToInsert != null || mealsToUpdate != null) />
-    <RadzenDataGrid @ref="grid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
-            Data="@usermeals" TItem="HealthyHands.Shared.Models.UserMeal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+    <RadzenDataGrid @ref="grid" AllowAlternatingRows="true" AllowFiltering="true" AllowColumnResize="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+            Data="@usermeals" TItem="HealthyHands.Shared.Models.UserMeal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="100px">
     <Columns>
         
         <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="MealName" Title="Meal Name" Frozen="true" Width="160px" > 
@@ -32,7 +32,7 @@ else
             </EditTemplate>
         </RadzenDataGridColumn>
 
-        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Calories" Title="Calories" Width="200px" > 
+        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Calories" Title="Calories" Width="150px" > 
             <EditTemplate Context="order">
                 <RadzenNumeric @bind-Value="order.Calories" Style="width:100%; display: block" Name="Calories" />
                 <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
@@ -44,19 +44,19 @@ else
                 <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Carbs" Title="Carbs" Width="160px" > 
+        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Carbs" Title="Carbs" Width="130px" > 
             <EditTemplate Context="order">
                 <RadzenNumeric @bind-Value="order.Carbs" Style="width:100%; display: block" Name="Carbs" />
                 <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Fat" Title="Fat" Width="160px" >
+        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Fat" Title="Fat" Width="130px" >
             <EditTemplate Context="order">
                 <RadzenNumeric @bind-Value="order.Fat" Style="width:100%; display: block" Name="Fat" />
                 <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
             </EditTemplate>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Sugar" Title="Sugar" Width="200px" >
+        <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Sugar" Title="Sugar" Width="140px" >
             <EditTemplate Context="order">
                 <RadzenNumeric @bind-Value="order.Sugar" Style="width:100%; display: block" Name="Sugar" />
                 <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />

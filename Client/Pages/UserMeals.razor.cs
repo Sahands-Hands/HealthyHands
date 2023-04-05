@@ -63,138 +63,7 @@ namespace HealthyHands.Client.Pages
                 }
             }
         }
-        private async Task AddUserMeals()
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            var userMealDto = new UserMealDto
-            {
-                MealName = newMealName,
-                MealDate = newMealDate,
-                Calories = newCalories,
-                Protein = newProtein,
-                Carbs = newCarbs,
-                Fat = newFat,
-                Sugar = newSugar,
-                ApplicationUserId = userId
-            };
-
-            var result = await MealsHttpRepository.AddMeals(userMealDto);
-
-            // Reset the input fields
-            newMealName = "";
-            newMealDate = DateTime.Today;
-            newCalories = 0;
-            newProtein = 0;
-            newCarbs = 0;
-            newFat = 0;
-            newSugar = 0;
-
-
-            // Update the table data
-            var userMeal = new UserMeal
-            {
-                MealName = userMealDto.MealName,
-                MealDate = userMealDto.MealDate,
-                Calories = userMealDto.Calories,
-                Protein = userMealDto.Protein,
-                Carbs = userMealDto.Carbs,
-                Fat = userMealDto.Fat,
-                Sugar = userMealDto.Sugar,
-                ApplicationUserId = userMealDto.ApplicationUserId
-            };
-            User.UserMeals.Add(userMeal);
-            StateHasChanged();
-        }
-        private async Task Delete(string userMealId)
-        {
-            var result = await MealsHttpRepository.DeleteMeals(userMealId);
-
-            if (result)
-            {
-                // The weight was deleted successfully
-                var mealToDelete = User.UserMeals.FirstOrDefault(w => w.UserMealId == userMealId);
-                if (mealToDelete != null)
-                {
-                    User.UserMeals.Remove(mealToDelete);
-                    StateHasChanged();
-                }
-            }
-            else
-            {
-                // There was an error deleting the weight
-            }
-        }
-        private void Edit(string userMealId)
-        {
-            var mealToEdit = User.UserMeals.FirstOrDefault(w => w.UserMealId == userMealId);
-            if (mealToEdit != null)
-            {
-                editMealId = mealToEdit.UserMealId;
-                editMealName = mealToEdit.MealName;
-                editMealDate = mealToEdit.MealDate;
-                editCalories = mealToEdit.Calories;
-                editProtein = mealToEdit.Protein;
-                editCarbs = mealToEdit.Carbs;
-                editFat = mealToEdit.Fat;
-                editSugar = mealToEdit.Sugar;
-            }
-            StateHasChanged();
-        }
-        private void Cancel()
-        {
-            UserMeal newMeal = new UserMeal { MealName = "", MealDate = DateTime.Today, Calories = 0, Protein = 0, Carbs = 0, Fat = 0, Sugar = 0 };
-            newMealDate = DateTime.Today;
-
-            showInputForm = false;
-
-            warningMessage = "";
-        }
-        private async Task Save(string userMealId)
-        {
-            // Update the weight in the database
-            var userMealDto = new UserMealDto
-            {
-                UserMealId = userMealId,
-                MealName = editMealName,
-                MealDate = editMealDate,
-                Calories = editCalories,
-                Protein = editProtein,
-                Carbs = editCarbs,
-                Fat = editFat,
-                Sugar = editSugar,
-                ApplicationUserId = User.Id
-            };
-            var result = await MealsHttpRepository.UpdateMeals(userMealDto);
-
-            // Update the weight in the table
-            var mealToUpdate = User.UserMeals.FirstOrDefault(w => w.UserMealId == userMealId);
-            if (mealToUpdate != null)
-            {
-                mealToUpdate.MealName = editMealName;
-                mealToUpdate.MealDate = editMealDate;
-                mealToUpdate.Calories = editCalories;
-                mealToUpdate.Protein = editProtein;
-                mealToUpdate.Carbs = editCarbs;
-                mealToUpdate.Fat = editFat;
-                mealToUpdate.Sugar = editSugar;
-                StateHasChanged();
-            }
-
-            // Reset the editing state
-            editMealId = null;
-            editMealName = "";
-            editMealDate = DateTime.Today;
-            editCalories = 0;
-            editProtein = 0;
-            editCarbs = 0;
-            editFat = 0;
-            editSugar = 0;
-
-            StateHasChanged();
-
-        }
         RadzenDataGrid<UserMeal> grid;
         IEnumerable<UserMeal> usermeals;
         UserMeal mealsToInsert;
@@ -216,7 +85,7 @@ namespace HealthyHands.Client.Pages
         {
             User = await MealsHttpRepository.GetMeals();
 
-            grid.Reload();
+            await grid.Reload();
         }
 
         private async Task OnCreateRow(UserMeal meals)
