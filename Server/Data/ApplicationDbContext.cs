@@ -1,10 +1,9 @@
 ﻿using Duende.IdentityServer.EntityFramework.Options;
 using HealthyHands.Server.Models;
+using HealthyHands.Shared.Models;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using HealthyHands.Shared.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace HealthyHands.Server.Data
 {
@@ -15,7 +14,10 @@ namespace HealthyHands.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
-        // public DbSet<UserDemographics> UserDemographics { get; set; }
+        public DbSet<UserWorkout> UserWorkouts { get; set; }
+        public DbSet<UserWeight> UserWeights { get; set; }
+        public DbSet<UserMeal> UserMeals { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();

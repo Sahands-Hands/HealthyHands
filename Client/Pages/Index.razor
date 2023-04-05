@@ -1,4 +1,7 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +10,17 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+protected override async Task OnInitializedAsync()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User.Identity;
+
+		if (user != null && user.IsAuthenticated)
+		{
+			NavigationManager.NavigateTo("/");
+		}
+	}
+}
