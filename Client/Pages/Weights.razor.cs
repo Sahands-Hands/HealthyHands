@@ -35,6 +35,9 @@ namespace HealthyHands.Client.Pages
         [Inject]
         public IWeightHttpRepository WeightHttpRepository { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         public UserWeightDto UserWeightDto { get; set; } = new UserWeightDto();
         public UserDto User { get; set; } = new UserDto();
         private string warningMessage = "";
@@ -53,6 +56,16 @@ namespace HealthyHands.Client.Pages
                 {
                     exception.Redirect();
                 }
+
+            }
+
+            else
+            {
+                // Redirect the user to the default weight feature page
+
+                NavigationManager.NavigateTo("/defaultuserweights");
+
+
             }
         }
 
