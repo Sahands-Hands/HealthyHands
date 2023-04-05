@@ -1,4 +1,5 @@
 using HealthyHands.Client;
+using HealthyHands.Client.HttpRepository.AdminHttpRepository;
 using HealthyHands.Client.HttpRepository.UserRepository;
 using HealthyHands.Client.HttpRepository.WorkoutsHttpRepository;
 using HealthyHands.Client.HttpRepository.WorkoutsRepository;
@@ -17,6 +18,7 @@ builder.Services.AddHttpClient("HealthyHands.ServerAPI", client => client.BaseAd
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("HealthyHands.ServerAPI"));
+builder.Services.AddScoped<IAdminHttpRepository, AdminHttpRepository>();
 builder.Services.AddScoped<IMealsHttpRepository, MealsHttpRepository>();
 builder.Services.AddScoped<IWorkoutsHttpRepository, WorkoutsHttpRepository>();
 builder.Services.AddScoped<IUserHttpRepository, UserHttpRepository>();
