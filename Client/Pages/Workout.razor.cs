@@ -9,7 +9,18 @@ using System.Collections.Generic;
 using Radzen;
 using Radzen.Blazor;
 namespace HealthyHands.Client.Pages
-{
+{ 
+    public class WorkoutType
+     {
+         public int Value { get; set; }
+         public string Name { get; set; }
+     }
+
+    public class WorkoutIntensity
+    {
+        public int Value { get; set; }
+        public string Name { get; set; }
+    }
     public partial class Workout
     {
         //New UserMeals
@@ -44,9 +55,9 @@ namespace HealthyHands.Client.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject]
         IWorkoutsHttpRepository WorkoutsHttpRepository { get; set; }
-        public UserDto User { get; set; } = new();
+
+        public UserDto CurrentUser { get; set; }
         public UserWorkoutDto UserWorkout { get; set; } = new();
-        //public IEnumerable<UserMeal> usermeal { get; set; }
 
         // 0 -> Bicycling
         // 1 -> Running
@@ -61,7 +72,7 @@ namespace HealthyHands.Client.Pages
         public WorkoutType selectedWorkoutType { get; set; } = new();
         
         public IEnumerable<WorkoutType> WorkoutTypes { get; set; } = new List<WorkoutType>
-       {
+        {
             new WorkoutType {Value = 0, Name = "Bicycling" },
             new WorkoutType {Value = 1, Name = "Running" },
             new WorkoutType {Value = 2, Name = "Walking"},
@@ -69,6 +80,13 @@ namespace HealthyHands.Client.Pages
             new WorkoutType {Value = 4, Name = "Skiing"},
             new WorkoutType {Value = 5, Name = "Climbing"},
             new WorkoutType {Value = 6, Name = "Strenght/Weight Training"}
+        };
+
+        public IEnumerable<WorkoutIntensity> WorkoutIntensities { get; set; } = new List<WorkoutIntensity>
+        {
+            new WorkoutIntensity { Value = 0, Name = "Easy" },
+            new WorkoutIntensity { Value = 1, Name = "Moderate" },
+            new WorkoutIntensity { Value = 2, Name = "Vigorous" }
         };
 
         public int WorkoutTypeValue { get; set; }
@@ -80,9 +98,8 @@ namespace HealthyHands.Client.Pages
             {
                 try
                 {
-                   User = await WorkoutsHttpRepository.GetWorkouts();
-                   workout = User.UserWorkouts;
-
+                   CurrentUser = await WorkoutsHttpRepository.GetWorkouts();
+                   workouts = CurrentUser.UserWorkouts;
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
@@ -95,7 +112,7 @@ namespace HealthyHands.Client.Pages
         //******************************************************************Radzen********************************************************************
 
         RadzenDataGrid<UserWorkout> grid;
-        IEnumerable<UserWorkout> workout;
+        IEnumerable<UserWorkout> workouts;
         UserWorkout workoutToInsert;
         UserWorkout workoutToUpdate;
 
@@ -108,30 +125,29 @@ namespace HealthyHands.Client.Pages
         async Task InsertRow()
         {
             workoutToInsert = new UserWorkout();
+            workoutToInsert.WorkoutDate = DateTime.Today;
             await grid.InsertRow(workoutToInsert);
         }
-
-
+        
         private async Task FetchData()
         {
-            User = await WorkoutsHttpRepository.GetWorkouts();
-
-            grid.Reload();
+            CurrentUser = await WorkoutsHttpRepository.GetWorkouts();
+            workouts = CurrentUser.UserWorkouts;
         }
+        
         private async Task OnCreateRow(UserWorkout workout)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            
 
             var userWorkoutDto = new UserWorkoutDto
             {
                 WorkoutName = workout.WorkoutName,
-                WorkoutType = selectedWorkoutType.Value,
+                WorkoutType = workout.WorkoutType,
                 Intensity = workout.Intensity,
                 Length = workout.Length,
                 WorkoutDate = workout.WorkoutDate,
-                CaloriesBurned = (int)workout.CaloriesBurned,
+                CaloriesBurned = workout.CaloriesBurned ?? 0, // change to calories burned
                 ApplicationUserId = workout.ApplicationUserId
             };
 
@@ -165,11 +181,11 @@ namespace HealthyHands.Client.Pages
             {
                 UserWorkoutId = workout.UserWorkoutId,
                 WorkoutName = workout.WorkoutName,
-                WorkoutType = selectedWorkoutType.Value,
+                WorkoutType = workout.WorkoutType,
                 Intensity = workout.Intensity,
                 Length = workout.Length,
                 WorkoutDate = workout.WorkoutDate,
-                CaloriesBurned = (int)workout.CaloriesBurned,
+                CaloriesBurned = workout.CaloriesBurned ?? 0,
                 ApplicationUserId = workout.ApplicationUserId
                 
             };
@@ -211,39 +227,29 @@ namespace HealthyHands.Client.Pages
 
         async Task DeleteRow(UserWorkout workout)
         {
-            if (workout == workoutToInsert)
-            {
-                workoutToInsert = null;
-            }
-
-            if (workout == workoutToUpdate)
-            {
-                workoutToUpdate = null;
-            }
+            // if (workout == workoutToInsert)
+            // {
+            //     workoutToInsert = null;
+            // }
+            //
+            // if (workout == workoutToUpdate)
+            // {
+            //     workoutToUpdate = null;
+            // }
 
             var result = await WorkoutsHttpRepository.DeleteWorkout(workout.UserWorkoutId);
 
             if (result)
             {
-                // The weight was deleted successfully
-                var workoutToDelete = User.UserWorkouts.FirstOrDefault(w => w.UserWorkoutId == workout.UserWorkoutId);
-                if (workoutToDelete != null)
-                {
-                    User.UserWorkouts.Remove(workoutToDelete);
-                    await grid.Reload();
-                    StateHasChanged();
-                }
+                await FetchData();
+                await grid.Reload();
+                
             }
 
             else
             {
                 grid.CancelEditRow(workout);
-                await grid.Reload();
             }
-
-            StateHasChanged();
-            await grid.Reload();
-            await FetchData();
         }
 
         //**********Calories Burned**********//
@@ -270,20 +276,8 @@ namespace HealthyHands.Client.Pages
             { 5, new List<double> { 7, 8, 11 } }, 
             { 6, new List<double> { 3.5, 5.5, 8 } } 
         };
-        
-
-        Dictionary<string, int> workoutTypes = new Dictionary<string, int> { { "Bicycling", 0 }, { "Running", 1 }, { "Walking", 2 }, { "Swimming", 3 }, { "Skiing", 4 }, { "Climbing", 5 }, { "Strength/Weight Training", 6 } };
-        // <RadzenDropDown @bind-Value="order.WorkoutType" Data="@workoutTypes" TextProperty="Key" ValueProperty="Value" Style="width:100%; display: block;" />
-        // <RadzenNumeric @bind-Value="order.WorkoutType" Style="width:100%; display: block" Name="WorkoutType" />
-        Dictionary<string, int> intensityType = new Dictionary<string, int> { { "Light", 0 }, { "Moderate", 1 }, { "Vigorous", 2 } };
-
-
     }
 
-    public class WorkoutType
-    {
-        public int Value { get; set; }
-        public string Name { get; set; }
-    }
+   
 
 }
