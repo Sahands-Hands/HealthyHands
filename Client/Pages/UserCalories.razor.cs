@@ -14,6 +14,7 @@ namespace HealthyHands.Client.Pages
         [Inject] HttpRepository.UserRepository.IUserHttpRepository UserHttpRepository { get; set; }
 
         public UserDto User { get; set; } = new();
+        public UserDto UserInfo { get; set; } = new();
         public string Goal { get; set; } = "maintain";
         public double Calories { get; set; }
         public string Message { get; set; } = "Awaiting Weight Goal";
@@ -26,7 +27,8 @@ namespace HealthyHands.Client.Pages
             {
                 try
                 {
-                    User = await UserHttpRepository.GetUserInfo();
+                    User = await WeightHttpRepository.GetWeights();
+                    UserInfo = await UserHttpRepository.GetUserInfo();
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
@@ -38,11 +40,10 @@ namespace HealthyHands.Client.Pages
         public void CalculateCalories()
         {
             int weightLength = User.UserWeights.Count;
-            int gender = (int)User.Gender;
-            //double weight = User.UserWeights.ElementAt<UserWeight>(weightLength - 1).Weight;
-            double weight = 100;
-            int height = (int)User.Height;
-            DateTime? birthDay = User.BirthDay;
+            int gender = (int)UserInfo.Gender;
+            double weight = User.UserWeights[weightLength-1].Weight;
+            int height = (int)UserInfo.Height;
+            DateTime? birthDay = UserInfo.BirthDay;
             int age = (int)GetAge(birthDay);
             Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
         }
