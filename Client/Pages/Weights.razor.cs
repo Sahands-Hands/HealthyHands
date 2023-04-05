@@ -1,31 +1,17 @@
-﻿using HealthyHands.Client.HttpRepository.WeightHttpRepository;
-using HealthyHands.Shared.Models;
+﻿using HealthyHands.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Radzen.Blazor;
 using System.Security.Claims;
-
-
-
+using HealthyHands.Client.HttpRepository.WeightHttpRepository;
 
 
 namespace HealthyHands.Client.Pages
 {
     public partial class Weights
     {
-        // Initialize the newWeightDate variable to the current date
-        DateTime newWeightDate = DateTime.Today;
-        private UserWeight newWeight = new UserWeight { Weight = 0, WeightDate = DateTime.Now };
-        private string editingWeightId;
-        private double editingWeight;
-        private DateTime editingWeightDate;
-        RadzenGrid<UserWeight> grid;
-        bool showInputForm = false;
-      
-
-
-
+     
         [Inject]
         public HttpClient _httpClient { get; set; }
 
@@ -34,190 +20,136 @@ namespace HealthyHands.Client.Pages
 
         [Inject]
         public IWeightHttpRepository WeightHttpRepository { get; set; }
-
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+        public UserDto CurrentUser { get; set; }
+        public UserWeightDto UserWeight { get; set; } = new();
 
-        public UserWeightDto UserWeightDto { get; set; } = new UserWeightDto();
-        public UserDto User { get; set; } = new UserDto();
-        private string warningMessage = "";
+
+        RadzenDataGrid<UserWeight> grid;
+        IEnumerable<UserWeight> weights;
+        UserWeight weightToInsert;
+        UserWeight weightToUpdate;
 
         protected override async Task OnInitializedAsync()
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var userAuth = authState.User.Identity;
-            if (userAuth is not null && userAuth.IsAuthenticated)
+            var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+            if (UserAuth is not null && UserAuth.IsAuthenticated)
             {
                 try
                 {
-                    await FetchData();
+                    CurrentUser = await WeightHttpRepository.GetWeights();
+                    weights = CurrentUser.UserWeights;
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
                     exception.Redirect();
-                }
-
+                } 
             }
-
             else
             {
-                // Redirect the user to the default weight feature page
-
                 NavigationManager.NavigateTo("/defaultuserweights");
-
-
             }
         }
 
-
-        private async Task AddWeight()
+        void Reset()
         {
-            if (newWeight.Weight <= 0)
-            {
-                warningMessage = "Weight should be greater than zero.";
-                return;
-            }
-            else
-            {
-                warningMessage = "";
-            }
-            if (newWeightDate > DateTime.Today)
-            {
-                warningMessage = "You cannot input a weight for the future.";
-                return;
-            }
+            weightToInsert = null;
+            weightToUpdate = null;
+        }
 
-            // Check if the weight date is for the same day and the time is before 6 AM
-            if (newWeightDate.Date == DateTime.Now.Date && newWeightDate.Hour == DateTime.Now.Hour)
-            {
-                warningMessage = "You cannot input a weight for the same hour of the same day.";
-                return;
-            }
-            if (newWeight.Weight > 2000)
-            {
-                warningMessage = "Weight cannot be greater than 2000 pounds.";
-                return;
-            }
+        async Task InsertRow()
+        {
+            weightToInsert = new UserWeight();
+            weightToInsert.WeightDate = DateTime.Today;
+            await grid.InsertRow(weightToInsert);
+        }
 
-            var latestWeight = User.UserWeights.OrderByDescending(w => w.WeightDate).FirstOrDefault();
-            if (latestWeight != null && newWeight.Weight - latestWeight.Weight > 100)
-            {
-                warningMessage = "Weight cannot be increased by more than 100 pounds per day.";
-                return;
-            }
+        private async Task FetchData()
+        {
+            CurrentUser = await WeightHttpRepository.GetWeights();
+            weights = CurrentUser.UserWeights;
+        }
 
+        private async Task OnCreateRow(UserWeight weight)
+        {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             var userWeightDto = new UserWeightDto
             {
-                Weight = newWeight.Weight,
-                WeightDate = newWeightDate,
+
+                Weight = weight.Weight,
+                WeightDate = weight.WeightDate,
                 ApplicationUserId = userId
             };
-
             var result = await WeightHttpRepository.AddWeight(userWeightDto);
 
-            newWeight = new UserWeight { Weight = 0, WeightDate = DateTime.Now };
-            newWeightDate = DateTime.Today;
-
-            showInputForm = false;
-
-
-            await FetchData();
-        }
-
-        private async Task FetchData()
-        {
-            User = await WeightHttpRepository.GetWeights();
-
-            grid.Reload();
-        }
-
-        private async Task DeleteWeight(string id)
-        {
-            await WeightHttpRepository.DeleteWeight(id);
-            var weightToRemove = User.UserWeights.FirstOrDefault(w => w.UserWeightId == id);
-            if (weightToRemove != null)
-            {
-                User.UserWeights.Remove(weightToRemove);
-            }
-
-            await FetchData();
-        }
-
-        private void Edit(string userWeightId)
-        {
-            var weightToEdit = User.UserWeights.FirstOrDefault(w => w.UserWeightId == userWeightId);
-            if (weightToEdit != null)
-            {
-                editingWeightId = weightToEdit.UserWeightId;
-                editingWeight = weightToEdit.Weight;
-                editingWeightDate = weightToEdit.WeightDate;
-            }
-
-            // Update the UI to reflect the changes
             StateHasChanged();
+            weightToInsert = null;
         }
 
-        private void Cancel()
+        private async Task OnUpdateRow(UserWeight weight)
         {
-            newWeight = new UserWeight { Weight = 0, WeightDate = DateTime.Now };
-            newWeightDate = DateTime.Today;
-
-            showInputForm = false;
-
-            warningMessage = "";
-
-            // Remove the new weight from the list
-            User.UserWeights.Remove(newWeight);
-        }
-
-        private async Task Save(string userWeightId)
-        {
-            // Create a new UserWeightDto object with the updated values of the weight entry
-            var userWeightDto = new UserWeightDto
+            if (weight == weightToInsert)
             {
-                UserWeightId = userWeightId,
-                Weight = editingWeight,
-                WeightDate = editingWeightDate,
-                ApplicationUserId = User.Id
+                weightToInsert = null;
+            }
+            weightToUpdate = null;
+
+            UserWeightDto userWeight = new UserWeightDto
+            {
+                UserWeightId = weight.UserWeightId,
+                Weight = weight.Weight,
+                WeightDate = weight.WeightDate,
+                ApplicationUserId = weight.ApplicationUserId,
+
             };
 
-            // Pass the UserWeightDto object to the WeightHttpRepository service to update the weight entry in the database
-            var result = await WeightHttpRepository.UpdateWeight(userWeightDto);
+            var result = await WeightHttpRepository.UpdateWeight(userWeight);
 
-            // Update the corresponding weight entry in the UserWeights property of the User object with the new values
-            var weightToUpdate = User.UserWeights.FirstOrDefault(w => w.UserWeightId == userWeightId);
-            if (weightToUpdate != null)
-            {
-                weightToUpdate.Weight = editingWeight;
-                weightToUpdate.WeightDate = editingWeightDate;
-            }
-
-            // Reset the editing state to exit edit mode
-            editingWeightId = null;
-            editingWeight = 0;
-            editingWeightDate = DateTime.Now;
-
-            // Update the UI to reflect the changes
-            StateHasChanged();
         }
 
 
 
-        private void addNewRow()
+        async Task EditRow(UserWeight weight)
         {
-            showInputForm = true;
-
-            // Create a new instance of the UserWeight class to hold the input data
-            newWeight = new UserWeight { Weight = 0, WeightDate = DateTime.Now };
-            newWeightDate = DateTime.Today;
+            weightToUpdate = weight;
+            await grid.EditRow(weight);
         }
 
+        async Task SaveRow(UserWeight weight)
+        {
+            await grid.UpdateRow(weight);
+
+        }
+        void CancelEdit(UserWeight weight)
+        {
+            if (weight == weightToInsert)
+            {
+                weightToInsert = null;
+            }
+            weightToUpdate = null;
+
+            grid.CancelEditRow(weight);
+        }
+
+        async Task DeleteRow(UserWeight weight)
+        {
+            var result = await WeightHttpRepository.DeleteWeight(weight.UserWeightId);
+            if (result)
+            {
+                await FetchData();
+                await grid.Reload();
+
+            }
+            else
+            {
+                grid.CancelEditRow(weight);
+            }
+        }
     }
+
 }
-
-
 
 
