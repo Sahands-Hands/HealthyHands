@@ -77,43 +77,43 @@ namespace HealthyHands.Client.Pages
 
         RadzenDataGrid<UserMeal> grid;
         IEnumerable<UserMeal> usermeals;
-        UserMeal mealsToInsert;
+        UserMeal mealToInsert;
         UserMeal mealsToUpdate;
 
         void Reset()
         {
-            mealsToInsert = null;
+            mealToInsert = null;
             mealsToUpdate = null;
         }
 
         async Task InsertRow()
         {
-            mealsToInsert = new UserMeal();
-            await grid.InsertRow(mealsToInsert);
+            mealToInsert = new UserMeal();
+            mealToInsert.MealDate = DateTime.Today;
+            await grid.InsertRow(mealToInsert);
         }
 
         private async Task FetchData()
         {
             User = await MealsHttpRepository.GetMeals();
-
-            await grid.Reload();
+            usermeals = User.UserMeals;
         }
 
-        private async Task OnCreateRow(UserMeal meals)
+        private async Task OnCreateRow(UserMeal meal)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             var userMealDto = new UserMealDto
             {
-                MealName = meals.MealName,
-                MealDate = Today ?? DateTime.Today,
-                Calories = meals.Calories,
-                Protein = meals.Protein,
-                Carbs = meals.Carbs,
-                Fat = meals.Fat,
-                Sugar = meals.Sugar,
-                ApplicationUserId = meals.ApplicationUserId
+                MealName = meal.MealName,
+                MealDate = meal.MealDate,
+                Calories = meal.Calories,
+                Protein = meal.Protein,
+                Carbs = meal.Carbs,
+                Fat = meal.Fat,
+                Sugar = meal.Sugar,
+                ApplicationUserId = meal.ApplicationUserId
             };
 
             var result = await MealsHttpRepository.AddMeals(userMealDto);
@@ -131,28 +131,28 @@ namespace HealthyHands.Client.Pages
 
             
 
-            mealsToInsert = null;
+            mealToInsert = null;
         }
-        private async Task OnUpdateRow(UserMeal meals)
+        private async Task OnUpdateRow(UserMeal meal)
         {
             
-            if (meals == mealsToInsert)
+            if (meal == mealToInsert)
             {
-                mealsToInsert = null;
+                mealToInsert = null;
             }
             mealsToUpdate = null;
 
             UserMealDto userMeal = new UserMealDto
             {
-                UserMealId = meals.UserMealId,
-                MealName = meals.MealName,
-                MealDate = meals.MealDate,
-                Calories = meals.Calories,
-                Protein = meals.Protein,
-                Carbs = meals.Carbs,
-                Fat = meals.Fat,
-                Sugar = meals.Sugar,
-                ApplicationUserId = meals.ApplicationUserId
+                UserMealId = meal.UserMealId,
+                MealName = meal.MealName,
+                MealDate = meal.MealDate,
+                Calories = meal.Calories,
+                Protein = meal.Protein,
+                Carbs = meal.Carbs,
+                Fat = meal.Fat,
+                Sugar = meal.Sugar,
+                ApplicationUserId = meal.ApplicationUserId
             };
 
             var result = await MealsHttpRepository.UpdateMeals(userMeal);
@@ -179,20 +179,20 @@ namespace HealthyHands.Client.Pages
             await grid.EditRow(meals);
         }
 
-        async Task SaveRow(UserMeal meals)
+        async Task SaveRow(UserMeal meal)
         {
-            await grid.UpdateRow(meals);
+            await grid.UpdateRow(meal);
 
         }
-        void CancelEdit(UserMeal meals)
+        void CancelEdit(UserMeal meal)
         {
-            if (meals == mealsToInsert)
+            if (meal == mealToInsert)
             {
-                mealsToInsert = null;
+                mealToInsert = null;
             }
             mealsToUpdate = null;
 
-            grid.CancelEditRow(meals);
+            grid.CancelEditRow(meal);
 
             UserMeal newMeal = new UserMeal { MealName = "", MealDate = DateTime.Today, Calories = 0, Protein = 0, Carbs = 0, Fat = 0, Sugar = 0 };
             newMealDate = DateTime.Today;
@@ -201,42 +201,19 @@ namespace HealthyHands.Client.Pages
 
             warningMessage = "";
         }
-        async Task DeleteRow(UserMeal meals)
+        async Task DeleteRow(UserMeal meal)
         {
-            if (meals == mealsToInsert)
-            {
-                mealsToInsert = null;
-            }
-
-            if (meals == mealsToUpdate)
-            {
-                mealsToUpdate = null;
-            }
-
-            var result = await MealsHttpRepository.DeleteMeals(meals.UserMealId);
+            var result = await MealsHttpRepository.DeleteMeals(meal.UserMealId);
 
             if (result)
             {
                 // The weight was deleted successfully
-                var mealToDelete = User.UserMeals.FirstOrDefault(w => w.UserMealId == meals.UserMealId);
-                if (mealToDelete != null)
-                {
-                    User.UserMeals.Remove(mealToDelete);
-                    await grid.Reload();
-                    StateHasChanged();
-                }
-            }
-
-            else
-            {
-                grid.CancelEditRow(meals);
+                await FetchData();
                 await grid.Reload();
+            } else
+            {
+                grid.CancelEditRow(meal);
             }
-
-            StateHasChanged();
-            await grid.Reload();
-            await FetchData();
         }
-
     }
 }
