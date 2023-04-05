@@ -40,7 +40,7 @@ namespace HealthyHands.Shared.Models
         /// <summary>
         /// Gets or sets the calories burned.
         /// </summary>
-        public int CaloriesBurned { get; set; }
+        public int? CaloriesBurned { get; set; }
         /// <summary>
         /// Gets or sets the application user id.
         /// </summary>
