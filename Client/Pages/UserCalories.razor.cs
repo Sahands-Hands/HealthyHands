@@ -1,11 +1,10 @@
 ﻿using HealthyHands.Client.HttpRepository.UserRepository;
+using HealthyHands.Client.HttpRepository.WeightHttpRepository;
 using HealthyHands.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-
-
-
+using System;
 
 namespace HealthyHands.Client.Pages
 {
@@ -13,30 +12,24 @@ namespace HealthyHands.Client.Pages
     {
         [Inject] HttpClient HttpClient { get; set; }
         [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-
-
-
+        [Inject] IWeightHttpRepository WeightHttpRepository { get; set; }
         [Inject] IUserHttpRepository UserHttpRepository { get; set; }
 
         public UserDto User { get; set; } = new();
-
         public string Goal { get; set; } = "maintain";
+        public double Calories { get; set; }
 
-        public double calories { get; set; }
-
-
-
-
+        public UserWeightDto[] Weights { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            var UserAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
-            if (UserAuth is not null && UserAuth.IsAuthenticated)
+            var userAuth = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity;
+            if (userAuth is not null && userAuth.IsAuthenticated)
             {
                 try
                 {
                     User = await UserHttpRepository.GetUserInfo();
-
+                    Weights = await WeightHttpRepository.GetWeights();
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
@@ -45,22 +38,20 @@ namespace HealthyHands.Client.Pages
             }
         }
 
-        public void CalculateCalories()
-        {
-            int gender = User.Gender;  // You can use the user's gender from the UserDto
-            int weight = User.Weight;
-            int height = User.Height;
-            DateTime? birthDay = User.BirthDate;
-            int age = GetAge(birthDay) ?? 30; // If the age is not available, assume it's 30
+        //public void CalculateCalories()
+        //{
+        //    int gender = User.Gender;
+        //    int weight = User.Weight;
+        //    int height = User.Height;
+        //    DateTime? birthDay = User.BirthDate;
+        //    int age = GetAge(birthDay);
+        //    Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
+        //}
 
-            calories = calculateCalories(gender, weight, height, age, Goal);
-        }
-
-        public double calculateCalories(int gender, int weight, int height, int age, string goal)
+        private double CalculateRecommendedCalories(int gender, int weight, int height, int age, string goal)
         {
-            double rec;
-            double height_cm = height * 2.54;
-            double weight_kg = weight * 0.453;
+            double heightCm = height * 2.54;
+            double weightKg = weight * 0.453;
             double calorieModifier = 1.0;
 
             // Determine the calorie modifier based on the goal
@@ -76,13 +67,13 @@ namespace HealthyHands.Client.Pages
             // Calculate recommended calorie intake
             if (gender == 0)  //Assuming if gender is 0 then it is a male, otherwise need to change this
             {
-                rec = 66.5 + (13.75 * (weight_kg)) + (5.003 * (height_cm)) - (6.75 * age);
-                return (Math.Round(rec * calorieModifier, 2));
+                double rec = 66.5 + (13.75 * weightKg) + (5.003 * heightCm) - (6.75 * age);
+                return Math.Round(rec * calorieModifier, 2);
             }
             else
             {
-                rec = 655.1 + (9.563 * (weight_kg)) + (1.85 * (height_cm)) - (4.676 * age);
-                return (Math.Round(rec * calorieModifier, 2));
+                double rec = 655.1 + (9.563 * weightKg) + (1.85 * heightCm) - (4.676 * age);
+                return Math.Round(rec * calorieModifier, 2);
             }
         }
 
@@ -100,6 +91,16 @@ namespace HealthyHands.Client.Pages
                 age--;
             }
 
+
             return age;
+
+
+            }
+
+
         }
+
     }
+
+
+
