@@ -2,8 +2,8 @@
 @using Radzen.Blazor
 @using Radzen
 
-<title>My Page</title>
-<link rel="stylesheet" href="/css/styles.css" />
+@* <title>My Page</title> *@
+@* <link rel="stylesheet" href="/css/styles.css" /> *@
 
 
 
@@ -36,7 +36,7 @@ else
                 </EditTemplate>
             </RadzenDataGridColumn>
 
-            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="120px">
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Context="weight" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="120px">
                 <Template Context="weight">
                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(weight))" @onclick:stopPropagation="true">
                     </RadzenButton>
@@ -63,7 +63,7 @@ else
 
 
 <h2>Weight Graph</h2>
-<RadzenChart>
+<RadzenChart @ref="chart">
     <RadzenLegend />
     <RadzenCategoryAxis>
         <RadzenAxisTitle Text="Date" />

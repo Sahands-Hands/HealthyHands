@@ -22,11 +22,13 @@ namespace HealthyHands.Client.Pages
         public IWeightHttpRepository WeightHttpRepository { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-        public UserDto CurrentUser { get; set; }
+
+        public UserDto CurrentUser { get; set; } = new UserDto();
         public UserWeightDto UserWeight { get; set; } = new();
 
 
         RadzenDataGrid<UserWeight> grid;
+        RadzenChart chart;
         IEnumerable<UserWeight> weights;
         UserWeight weightToInsert;
         UserWeight weightToUpdate;
@@ -85,6 +87,8 @@ namespace HealthyHands.Client.Pages
             };
             var result = await WeightHttpRepository.AddWeight(userWeightDto);
 
+            await FetchData();
+            await chart.Reload();
             StateHasChanged();
             weightToInsert = null;
         }
@@ -107,7 +111,8 @@ namespace HealthyHands.Client.Pages
             };
 
             var result = await WeightHttpRepository.UpdateWeight(userWeight);
-
+            await FetchData();
+            await chart.Reload();
         }
 
 
@@ -121,6 +126,7 @@ namespace HealthyHands.Client.Pages
         async Task SaveRow(UserWeight weight)
         {
             await grid.UpdateRow(weight);
+            await chart.Reload();
 
         }
         void CancelEdit(UserWeight weight)
@@ -141,6 +147,7 @@ namespace HealthyHands.Client.Pages
             {
                 await FetchData();
                 await grid.Reload();
+                await chart.Reload();
 
             }
             else
