@@ -2,6 +2,8 @@
 @using Radzen
 @using Radzen.Blazor
 @inject DialogService DialogService
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles ="Admin")]
 
 <h3>AdminFeature</h3>
 
