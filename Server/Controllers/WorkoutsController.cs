@@ -130,6 +130,7 @@ namespace HealthyHands.Server.Controllers
             {
                 UserWorkoutId = workoutDto.UserWorkoutId,
                 WorkoutName = workoutDto.WorkoutName,
+                WorkoutType = workoutDto.WorkoutType,
                 Intensity = workoutDto.Intensity,
                 Length = workoutDto.Length,
                 WorkoutDate = workoutDto.WorkoutDate,

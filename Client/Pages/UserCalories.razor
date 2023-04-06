@@ -1,0 +1,33 @@
+﻿@page "/usercalories"
+
+ 
+<title My page </title>
+
+
+@if (User == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div style="display:flex;justify-content:space-around;align-items:center;">
+        <button class="btn btn-primary" type="button" @onclick="LoseWeight" style="height:250px;width:150px;background-color:#48e9d7;color:#e9485a;">
+            <img src="img/lose.png" alt="losepng" border="0" style="height:200px;width:90px;"/>
+            <b>Lose Weight</b>
+        </button>
+        <button class="btn btn-primary" type="button" @onclick="MaintainWeight" style="height:250px;width:150px;background-color:#48e9d7;color:#e9485a;">
+            <img src="img/maintain.png" alt="maintainpng" border="0" style="height:200px;width:100px;"/>
+            <b>Maintain Weight</b>
+        </button>
+        <button class="btn btn-primary" type="button" @onclick="GainWeight" style="height:250px;width:150px;background-color:#48e9d7;color:#e9485a;">
+            <img src="img/gain.png" alt="gainpng" border="0" style="height:200px;width:110px;"/>
+            <b>Gain Weight</b>
+        </button>
+    </div>
+    <div>
+        <br>
+        <br>
+        <h3 style="text-align: center;">@Message</h3>
+        <h3 style="text-align: center;">@CalorieMessage</h3>
+    </div>
+}
