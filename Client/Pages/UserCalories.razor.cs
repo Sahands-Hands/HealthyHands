@@ -13,6 +13,12 @@ namespace HealthyHands.Client.Pages
         [Inject] HttpRepository.WeightHttpRepository.IWeightHttpRepository WeightHttpRepository { get; set; }
         [Inject] HttpRepository.UserRepository.IUserHttpRepository UserHttpRepository { get; set; }
 
+        [Inject] NavigationManager NavigationManager { get; set; }
+
+
+
+
+
         public UserDto User { get; set; } = new();
         public UserDto UserInfo { get; set; } = new();
         public string Goal { get; set; } = "maintain";
@@ -35,6 +41,11 @@ namespace HealthyHands.Client.Pages
                     exception.Redirect();
                 }
             }
+            else
+            {
+                NavigationManager.NavigateTo("/defaultusercalories");
+            }
+
         }
 
         public void CalculateCalories()
