@@ -49,6 +49,7 @@ namespace HealthyHands.Client.Pages
                 {
                     exception.Redirect();
                 }
+                
             }
 
         }

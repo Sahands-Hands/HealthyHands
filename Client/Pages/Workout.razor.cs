@@ -55,6 +55,8 @@ namespace HealthyHands.Client.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject]
         IWorkoutsHttpRepository WorkoutsHttpRepository { get; set; }
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         public UserDto CurrentUser { get; set; }
         public UserWorkoutDto UserWorkout { get; set; } = new();
@@ -105,6 +107,13 @@ namespace HealthyHands.Client.Pages
                 {
                     exception.Redirect();
                 }
+            }
+            else
+            {
+                // Redirect the user to the default weight feature page
+
+                NavigationManager.NavigateTo("/defaultuserworkouts");
+
             }
         }
        
