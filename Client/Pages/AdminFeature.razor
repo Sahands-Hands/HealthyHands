@@ -1,0 +1,64 @@
+﻿@page "/adminfeature"
+@using Radzen
+@using Radzen.Blazor
+@inject DialogService DialogService
+
+<h3>AdminFeature</h3>
+
+<PageTitle>AdminFeature</PageTitle>
+
+@if (Users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    
+    <RadzenDataGrid @ref="grid" AllowAlternatingRows="false" AllowFiltering="false" AllowPaging="false" PageSize="5" AllowSorting="false" EditMode="DataGridEditMode.Single"
+                Data="@userinfo" TItem="HealthyHands.Shared.Models.UserDto" RowUpdate="@OnUpdateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="UserName" Title="UserName" Frozen="true" Width="160px"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="FirstName" Title="FirstName" Frozen="true" Width="160px"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="LastName" Title="LastName" Frozen="true" Width="160px"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="IsAdmin" Title="Role" Frozen="true" Width="160px">
+                <Template Context="admin">
+                    @Admin.First(wt => wt.Value == admin.IsAdmin).Name
+                </Template>
+                <EditTemplate Context="admin">
+                    <RadzenDropDown @bind-Value="admin.IsAdmin" Data="@Admin" Name="Roles" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="LockoutEnabled" Title="Lockout" Frozen="true" Width="160px">
+                <Template Context="lockout">
+                    @Lockouts.First(wt => wt.Value == lockout.LockoutEnabled).Name
+                </Template>
+                <EditTemplate Context="admin">
+                    <RadzenDropDown @bind-Value="admin.LockoutEnabled" Data="@Lockouts" Name="LockoutEnabled" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            
+
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="order">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(order))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    
+                    
+                    <RadzenButton Icon="cached" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => ResetPWD(order))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    
+                </Template>
+                <EditTemplate Context="order">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(order))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(order))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>        
+    
+    </RadzenDataGrid>
+    <RadzenDialog />
+}

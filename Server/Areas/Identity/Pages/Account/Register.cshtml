@@ -1,10 +1,15 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Healthy Hands";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="logo">
+<img src ="~/css/HealthyHandsLogo.png" />
+    <h1>Healthy Hands</h1>
+</div>
+
+
 
 <div class="row">
     <div class="col-md-4">
@@ -13,7 +18,7 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating">
-                <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" />
+                <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true"/>
                 <label asp-for="Input.FirstName"></label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
@@ -61,37 +66,39 @@
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
+    
 </div>
+
+<style>
+    body{
+        background: rgb(72,233,215);
+        background: radial-gradient(circle, rgba(72,233,215,1) 0%, rgba(6,124,131,1) 100%);
+    }
+    .row{
+        padding-left: 20%;
+        
+        padding-bottom: 20%;
+    }
+
+    .col-md-4{
+        width: 500px;
+        
+    }
+    .logo{
+       padding-left:30%;
+    }
+    .row h2{
+        padding-left:20%;
+    }
+    #registerSubmit{
+        background-color: #fc7b06;
+    }
+
+   
+    
+
+</style>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
