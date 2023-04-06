@@ -3,6 +3,7 @@
 @using Radzen.Blazor
 
 <h3>Meals</h3>
+<link rel="stylesheet" href="/css/styles.css" />
 
 <PageTitle>Meals</PageTitle>
 
@@ -19,7 +20,7 @@ else
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="MealName" Title="Meal Name" Frozen="true" Width="160px" > 
                 <EditTemplate Context="order">
                     <RadzenTextBox @bind-Value="order.MealName" Style="width:100%; display: block" Name="MealName" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="MealDate" Title="Meal Date" Width="160px"> 
@@ -34,31 +35,32 @@ else
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Calories" Title="Calories" Width="150px" > 
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Calories" Style="width:100%; display: block" Name="Calories" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenNumericRangeValidator Min="1" Text="Can't be negative" Component="Calories" Popup="true" class="validation-message" />
+                   
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Protein" Title="Protein" Width="120px" > 
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Protein" Style="width:100%; display: block" Name="Protein" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenNumericRangeValidator Min="1" Text="Can't be negative" Component="Protein" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Carbs" Title="Carbs" Width="130px" > 
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Carbs" Style="width:100%; display: block" Name="Carbs" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenNumericRangeValidator Min="1" Text="Can't be negative" Component="Carbs" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Fat" Title="Fat" Width="130px" >
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Fat" Style="width:100%; display: block" Name="Fat" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenNumericRangeValidator Min="1" Text="Can't be negative" Component="Fat" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Sugar" Title="Sugar" Width="140px" >
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Sugar" Style="width:100%; display: block" Name="Sugar" />
-                    <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
+                    <RadzenNumericRangeValidator Min="1" Text="Can't be negative" Component="Sugar" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">

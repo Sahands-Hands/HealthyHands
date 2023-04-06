@@ -3,8 +3,7 @@
 @using Radzen
 
 @* <title>My Page</title> *@
-@* <link rel="stylesheet" href="/css/styles.css" /> *@
-
+ <link rel="stylesheet" href="/css/styles.css" /> 
 
 
 <PageTitle>Weights</PageTitle>
@@ -21,10 +20,11 @@ else
                 Data="@weights" TItem="HealthyHands.Shared.Models.UserWeight" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
         <Columns>
 
-            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight" Frozen="true" Width="160px">
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="Weight" Title="Weight(lb)" Frozen="true" Width="160px">
                 <EditTemplate Context="weight">
-                    <RadzenNumeric @bind-Value="weight.Weight" Style="width:100%; display: block" Name="Weight" />
-                    <RadzenRequiredValidator Text="Weight is required" Component="Weight" Popup="true" />
+                    <RadzenNumeric @bind-Value="weight.Weight" Style="width:100%; display: block" Name="Weight"  Required="true" />
+                    <RadzenNumericRangeValidator Text="Weight must be between 50 and 2000" Component="Weight" Min="50" Max="2000" Popup="true" class="validation-message" />
+                    <RadzenRequiredValidator Text="Weight is required" Component="Weight" Popup="true" class="validation-message" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWeight" Property="WeightDate" Title="Date" Width="120px">
