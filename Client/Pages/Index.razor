@@ -3,13 +3,71 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<style>
+  /* Add custom fonts */
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Montserrat:700&display=swap" rel="stylesheet" >
+  
+  /* Style page content */
+  body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  
+  h1, h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    margin-top: 2rem;
+  }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+  h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        margin-top: 2rem;
+   }
+  
+  p {
+    margin: 1rem 0;
+  }
+  
+  ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+  
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+    .page-break {
+        page-break-after: always;
+        margin-top: 300px;
+    }
+</style>
+
+<h1>Welcome to Healthy Hands </h1>
+
+
+<h3>Our Mission: </h3>
+
+<p>We believe that everyone deserves to live a healthy and happy life. That's why we created Healhy Hands to help you achieve your fitness goals and improve your well-being. Whether you want to lose weight, gain muscle, or maintain your current shape, we have the tools and guidance you need. Our website will help you calculate your optimal calorie intake, track your meals and macros, and monitor your weight progress. You will also get access to a supportive community of like-minded people who will motivate you along the way. Join us today and start your journey to a better you!</p>
+
+<!-- Page break -->
+<div class="page-break"></div>
+
+
+
+<h3>About Us: </h3>
+
+<p> We are a team of passionate and dedicated professionals who share a common vision: to help people live healthier and happier lives. We believe that everyone deserves to have access to the best tools and guidance for achieving their fitness goals and improving their well-being. That's why we created this website to provide you with a comprehensive and personalized solution that covers all aspects of your health journey. From calorie calculation to meal tracking, from weight monitoring to workout logging, we have everything you need in one place. Our website is more than just a platform; it's a community of like-minded people who support each other and celebrate each other's success. Join us today and discover how we can help you transform your life!</p>
+
+
+
 
 @code {
 
