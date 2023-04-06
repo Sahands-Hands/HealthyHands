@@ -39,6 +39,7 @@ namespace HealthyHands.Server.Data.Repository.WorkoutsRepository
             var user = await _context.Users.Select(u => new UserDto
             {
                 Id = u.Id,
+                CalorieGoal = u.CalorieGoal,
                 UserWorkouts = u.UserWorkouts
             }).FirstOrDefaultAsync(u => u.Id == userId);
 

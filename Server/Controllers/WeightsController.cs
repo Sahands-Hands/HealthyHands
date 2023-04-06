@@ -49,11 +49,6 @@ namespace HealthyHands.Server.Controllers
                 return BadRequest();
             }
 
-            if (user == null || user.UserWeights.Count == 0)
-            {
-                return NotFound();
-            }
-
             return Ok(user);
         }
 

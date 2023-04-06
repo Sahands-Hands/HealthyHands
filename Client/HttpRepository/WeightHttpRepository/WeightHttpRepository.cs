@@ -16,7 +16,7 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// <returns></returns>
         public async Task<UserDto> GetWeights()
         {
-            UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("weights");
+            var user = await _httpClient.GetFromJsonAsync<UserDto>("weights");
             return user;
         }
 
@@ -26,7 +26,7 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// <returns></returns>
         public async Task<UserDto> GetWeightsByWeightDate()
         {
-            UserDto user = await _httpClient.GetFromJsonAsync<UserDto>("weights/byDate/{date:string}");
+            var user = await _httpClient.GetFromJsonAsync<UserDto>("weights/byDate/{date:string}");
             return user;
 
         }

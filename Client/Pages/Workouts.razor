@@ -1,0 +1,244 @@
+﻿@page "/brokenworkout"
+@using Radzen.Blazor
+
+<PageTitle>Workouts</PageTitle>
+
+<h1>Workouts</h1>
+<label for="workoutname">Workout Name:</label>
+<input id="workoutname" type="text" @bind="newWorkoutName" />
+
+<label for="workouttype">Workout Type:</label>
+<input id="workouttype" type="number" @bind="newWorkoutType" />
+
+<label for="intensity">Intensity:</label>
+<input id="intensity" type="number" @bind="newIntensity" />
+
+<label for="length">Length:</label>
+<input id="length" type="number" @bind="newLength" />
+
+<label for="workoutdate">Date:</label>
+<input id="workoutdate" type="date" @bind="newWorkoutDate" />
+
+<label for="caloriesburned">Calories Burned:</label>
+<input id="caloriesburned" type="number" @bind="newCaloriesBurned" />
+
+@if (User == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+            /*	<table class="table">
+                <thead>
+                    <tr>
+                    <th>Workout Name</th>
+                    <th>Workout Type</th>
+                    <th>Intensity</th>
+                    <th>Length</th>
+                    <th>Workout Date</th>
+                <th>Calories Burned</th>
+            </tr>
+            </thead>
+            @foreach (var u in User.UserWorkouts)
+                {
+                    <tbody>
+                        <tr>
+                        <td>@u.WorkoutName</td>
+                        <td>@u.WorkoutType</td>
+                        <td>@u.Intensity</td>
+                        <td>@u.Length</td>
+                        <td>@u.WorkoutDate.Date.ToString("MM-dd-yyyy")</td>
+                        <td>@u.CaloriesBurned</td>
+                        <td><button @onclick="()=>DeleteWorkout(u.UserWorkoutId)">Delete</button></td>
+                            <td>
+                            <button @onclick="()=>UpdateWorkout(u.UserWorkoutId)">Update</button>
+                        <i class="oi oi-pencil"></i>
+                    </td>
+                </tr>
+            </tbody>
+            }
+            <button class="button" @onclick="()=> AddWorkout()">Add Workout</button>
+
+        </table>
+
+        <hr />
+
+        <EditForm Model="User.UserWorkouts" OnValidSubmit="HandleSubmit">
+                <div>
+                <label for="workoutname">Workout Name:</label>
+                <InputText id="workoutname" @bind-Value="UserWorkout.WorkoutName" class="form-control"/>
+            </div>
+                <div>
+                <label for="workouttype">Workout Type:</label>
+                <InputNumber id="workouttype" @bind-Value="UserWorkout.WorkoutType" class="form-control"/>
+            </div>
+                <div>
+                <label for="intensity">Intensity:</label>
+                <InputNumber id="intensity" @bind-Value="UserWorkout.Intensity" class="form-control"/>
+            </div>
+                <div>
+                <label for="length">Length:</label>
+                <InputNumber id="length" @bind-Value="UserWorkout.Length" class="form-control"/>
+            </div>
+                <div>
+                <label for="workoutdate">Date:</label>
+                <InputDate id="workoutdate" @bind-Value="UserWorkout.WorkoutDate" class="form-control"/>
+            </div>
+                <div>
+                <label for="caloriesburned">Calories Burned:</label>
+                <InputNumber id="caloriesburned" @bind-Value="UserWorkout.CaloriesBurned" class="form-control"/>
+        </div>
+        </EditForm>
+
+    */
+
+    <div>
+        <div style="float:left">
+            <button class="btn btn-primary" @onclick="@AddPopupWorkout">Add Workout</button>
+        </div>
+        <div style="float:right; width:40%;">
+            <div class="col-sm-6" style="float:left">
+                <input class="form-control" type="text" placeholder="Search" bind="@SearchString" />
+            </div>
+            <div>
+                <button type="submit" class="btn btn-default btn-info" onclick="@UpdateWorkout">Filter</button>
+            </div>
+        </div>
+    </div>
+
+        /*@if (User == null)
+        {
+    <p><em>Loading...</em></p>
+    }
+    else
+    {  */
+
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>Workout Name</th>
+                <th>Workout Type</th>
+                <th>Intensity</th>
+                <th>Length</th>
+                <th>Workout Date</th>
+                <th>Calories Burned</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in User.UserWorkouts)
+            {
+                <tr>
+                    <td>@u.WorkoutName</td>
+                    <td>@u.WorkoutType</td>
+                    <td>@u.Intensity</td>
+                    <td>@u.Length</td>
+                    <td>@u.WorkoutDate.Date.ToString("MM-dd-yyyy")</td>
+                    <td>@u.CaloriesBurned</td>
+                    <td>
+                        <button class="btn btn-default" onclick="@(async () => await UpdateWorkout(@u.UserWorkoutId))">Edit</button>
+                        <button class="btn btn-danger" onclick="@(async () => await DeleteWorkout(@u.UserWorkoutId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    if (isAdd)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">@modelTitle</h3>
+                        <button type="button" class="close" onclick="@closeModel">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="Name" class="control-label">Name</label>
+                                <input for="Name" class="form-control" @bind="newWorkoutName" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="workouttype" class="control-label">Workout Type</label>
+                                <input asp-for="workouttype" class="form-control" @bind="newWorkoutType" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="intensity" class="control-label">Intensity</label>
+                                <select asp-for="intensity" class="form-control" @bind="newIntensity">
+                                    <option value="">-- Select Intensity --</option>
+                                    <option value=1>Low Intensity</option>
+                                    <option value=2>Average Intensity</option>
+                                    <option value=3>High Intensity</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="length" class="control-label">Length</label>
+                                <input asp-for="length" class="form-control" @bind="newLength" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="workoutdate" class="control-label">Workout Date</label>
+                                <input asp-for="workoutdate" class="form-control" type="date" @bind="newWorkoutDate" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="caloriesburned" class="control-label">Calories Burned</label>
+                                <input asp-for="caloriesburned" class="form-control" @bind="newCaloriesBurned" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-block btn-info" onclick="@(async () => await AddWorkout())" data-dismiss="modal">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    if (isDelete)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Delete Employee</h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Do you want to delete this employee ??</h4>
+                        <table class="table">
+                            <tr>
+                                <td>Workout Name</td>
+                                <td>@newWorkoutName</td>
+                            </tr>
+                            <tr>
+                                <td>Workout Type</td>
+                                <td>@newWorkoutType</td>
+                            </tr>
+                            <tr>
+                                <td>Intensity</td>
+                                <td>@newIntensity</td>
+                            </tr>
+                            <tr>
+                                <td>Length</td>
+                                <td>@newLength</td>
+                            </tr>
+                            <tr>
+                                <td>Workout Date</td>
+                                <td>@newWorkoutDate</td>
+                            </tr>
+                            <tr>
+                                <td>Calories Burned</td>
+                                <td>@newCaloriesBurned</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" onclick="@(async () => await DeleteWorkout(UserWorkout.UserWorkoutId))" data-dismiss="modal">YES</button>
+                        <button class="btn btn-warning" onclick="@closeModel">NO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    // }
+}
