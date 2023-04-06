@@ -25,12 +25,20 @@ else
             <b>Gain Weight</b>
         </button>
     </div>
-    <div>
+    <br>
+    <br>
+    <div style = "background-color:#48e9d7;">
         <br>
+        <h3 style="text-align: center;color:white;">@Message</h3>
+        <h3 style="text-align: center;color:white;">@CalorieMessage</h3>
         <br>
-        <h3 style="text-align: center;">@Message</h3>
-        <h3 style="text-align: center;">@CalorieMessage</h3>
-        <h4>@User.UserWeights.Count</h4>
-        <h4>@UserInfo.Id</h4>
     </div>
+    <br>
+    <div style="display:flex;justify-content:space-around;align-items:center;">
+        <button class="btn btn-primary" type="button" @onclick="SaveCalories" style="background-color:#fc7b06;color:white;">
+            <b>Save Calorie Goal</b>
+        </button>
+    </div>
+    <br>
+    <h4 style="text-align: center;color:#e9485a;"><b>@SaveMessage</b></h4>
 }
