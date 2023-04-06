@@ -71,41 +71,57 @@ namespace HealthyHands.Client.Pages
 
         }
 
-        public void CalculateCalories()
+        public bool CalculateCalories()
         {
             int weightLength;
             weightLength = User.UserWeights.Count;
-            int gender = (int)UserInfo.Gender;
-            double weight = User.UserWeights[weightLength-1].Weight;
-            int height = (int)UserInfo.Height;
-            DateTime? birthDay = UserInfo.BirthDay;
-            int age = (int)GetAge(birthDay);
-            Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
+            if (weightLength > 0)
+            {
+                int gender = (int)UserInfo.Gender;
+                double weight = User.UserWeights[weightLength - 1].Weight;
+                int height = (int)UserInfo.Height;
+                DateTime? birthDay = UserInfo.BirthDay;
+                int age = (int)GetAge(birthDay);
+                Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
+                return true;
+            }
+            else
+            {
+                Message = "You have not added a weight, please add a weight";
+                CalorieMessage = "You can add a weight by going to the weights tab";
+                return false;
+            }
         }
 
         public void MaintainWeight()
         {
             WeightObjective = 1;
             Goal = "maintain";
-            CalculateCalories();
-            Message = $"Your desired goal is to {Goal} weight";
-            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            if (CalculateCalories())
+            {
+                Message = $"Your desired goal is to {Goal} weight";
+                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            }
         }
         public void GainWeight()
         {
             WeightObjective = 2;
             Goal = "gain";
-            CalculateCalories();
-            Message = $"Your desired goal is to {Goal} weight";
-            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            if (CalculateCalories())
+            {
+                Message = $"Your desired goal is to {Goal} weight";
+                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            }
         }
         public void LoseWeight()
         {
             WeightObjective = 0;
             Goal = "lose";
-            CalculateCalories();
-            Message = $"Your desired goal is to {Goal} weight";
-            CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            if (CalculateCalories())
+            {
+                Message = $"Your desired goal is to {Goal} weight";
+                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+            }
         }
 
         public async void SaveCalories()
