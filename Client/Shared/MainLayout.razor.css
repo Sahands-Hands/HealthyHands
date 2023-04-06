@@ -32,8 +32,9 @@ main {
     }
 
     .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+         text-decoration: underline;
+         color: #fc7b06
+     }
 
     .top-row ::deep a:first-child {
         overflow: hidden;
