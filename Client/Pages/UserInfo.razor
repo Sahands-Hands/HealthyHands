@@ -1,0 +1,78 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@page "/userinfo"
+
+<h3>UserInfo</h3>
+<style>
+   .font-weight-bold {
+      font-weight: bold !important;
+   } 
+</style>
+<PageTitle>User Info</PageTitle>
+<RadzenDataGrid @ref="grid" AllowAlternatingRows="false" AllowFiltering="false" AllowPaging="false" PageSize="5" AllowSorting="false" EditMode="DataGridEditMode.Single"
+            Data="@userinfo" TItem="HealthyHands.Shared.Models.UserDto" RowUpdate="@OnUpdateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+<Columns>   
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="FirstName" Title="First Name" Frozen="true" Width="160px"> 
+            <EditTemplate Context="order">
+                <RadzenTextBox @bind-Value="order.FirstName" Style="width:100%; display: block" Name="FirstName" />
+                <RadzenRequiredValidator Text="FirstName is required" Component="FirstName" Popup="true" />
+            </EditTemplate>
+    </RadzenDataGridColumn>
+
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="LastName" Title="Last Name" Frozen="true" Width="160px" > 
+        <EditTemplate Context="user">
+            <RadzenTextBox @bind-Value="user.LastName" Style="width:100%; display: block" Name="LastName" />
+            <RadzenRequiredValidator Text="LastName is required" Component="LastName" Popup="true" />
+        </EditTemplate>
+    </RadzenDataGridColumn>
+    
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="BirthDay" Title="Birthday" Frozen="true" Width="160px" >
+        <Template Context="user">
+            @user.BirthDay.GetValueOrDefault().Date.ToString("MM/dd/yyyy")
+        </Template>
+        <EditTemplate Context="user">
+            <RadzenDatePicker @bind-Value="user.BirthDay" Style="width:100%; display: block" Name="BirthDay" ReadOnly="true" MouseEnter="@(args => ShowTooltip(args) )"/>
+        </EditTemplate>
+    </RadzenDataGridColumn>
+    
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="Height" Title="Height (in.)" Frozen="true" Width="160px" > 
+            <EditTemplate Context="user">
+                <RadzenNumeric @bind-Value="user.Height" Style="width:100%; display: block" Name="Height" />
+                <RadzenRequiredValidator Text="Height is required" Component="Height" Popup="true" />
+            </EditTemplate>
+    </RadzenDataGridColumn>
+
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="Gender.Name" Title="Gender" Frozen="true" Width="200px">
+        <Template Context="user">
+            @GenderTypes.First(g => g.Value == user.Gender).Name
+        </Template>
+        <EditTemplate Context="user">
+            <RadzenDropDown @bind-Value="user.Gender" Data="@GenderTypes" Name="Gender" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;"/>
+            <RadzenRequiredValidator Text="Gender is required" Component="Gender" Popup="true"/>
+        </EditTemplate>
+    </RadzenDataGridColumn>
+
+    <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Property="ActivityLevel.Name" Title="Activity Level" Frozen="true" Width="200px">
+        <Template Context="user">
+            @ActivityTypes.First(al => al.Value == user.ActivityLevel).Name
+        </Template>
+        <EditTemplate Context="user">
+            <RadzenDropDown @bind-Value="user.ActivityLevel" Data="@ActivityTypes" Name="ActivityLevel" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;"/>
+            <RadzenRequiredValidator Text="Activity Level is required" Component="ActivityLevel" Popup="true"/>
+        </EditTemplate>
+    </RadzenDataGridColumn>
+
+     <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserDto" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+            <Template Context="order">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(order))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="order">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(order))">
+                </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(order))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+</Columns>
+</RadzenDataGrid>

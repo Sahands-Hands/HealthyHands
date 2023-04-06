@@ -25,6 +25,7 @@ builder.Services.AddScoped<IWorkoutsHttpRepository, WorkoutsHttpRepository>();
 builder.Services.AddScoped<IUserHttpRepository, UserHttpRepository>();
 builder.Services.AddScoped<IWeightHttpRepository, WeightHttpRepository>();
 
+builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddApiAuthorization();
