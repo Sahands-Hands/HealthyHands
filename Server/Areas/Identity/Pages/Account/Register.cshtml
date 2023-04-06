@@ -1,0 +1,105 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Healthy Hands";
+}
+
+<div class="logo">
+<img src ="~/css/HealthyHandsLogo.png" />
+    <h1>Healthy Hands</h1>
+</div>
+
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h2>Create a new account.</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating">
+                <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true"/>
+                <label asp-for="Input.FirstName"></label>
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" />
+                <label asp-for="Input.LastName"></label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Height" class="form-control" autocomplete="height" aria-required="true" />
+                <label asp-for="Input.Height"></label>
+                <span asp-validation-for="Input.Height" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <select asp-for="Input.Gender" class="form-control"> <option disabled selected>--- SELECT GENDER ---</option> <option value=0>Male</option> <option value=1>Female</option></select>
+                <label asp-for="Input.Gender"></label>
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <select asp-for="Input.ActivityLevel" class="form-control"> <option disabled selected>--- SELECT ACTIVITY LEVEL ---</option> <option value=0>Low Activity</option> <option value=1>Average Activity</option> <option value=2>High Activity</option></select>
+                <label asp-for="Input.ActivityLevel"></label>
+                <span asp-validation-for="Input.ActivityLevel" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.BirthDay" class="form-control" autocomplete="birthday" aria-required="true" />
+                <label asp-for="Input.BirthDay"></label>
+                <span asp-validation-for="Input.BirthDay" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.Email"></label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
+                <label asp-for="Input.Password"></label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                <label asp-for="Input.ConfirmPassword"></label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+        </form>
+    </div>
+    
+</div>
+
+<style>
+    body{
+        background: rgb(72,233,215);
+        background: radial-gradient(circle, rgba(72,233,215,1) 0%, rgba(6,124,131,1) 100%);
+    }
+    .row{
+        padding-left: 20%;
+        
+        padding-bottom: 20%;
+    }
+
+    .col-md-4{
+        width: 500px;
+        
+    }
+    .logo{
+       padding-left:30%;
+    }
+    .row h2{
+        padding-left:20%;
+    }
+    #registerSubmit{
+        background-color: #fc7b06;
+    }
+
+   
+    
+
+</style>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

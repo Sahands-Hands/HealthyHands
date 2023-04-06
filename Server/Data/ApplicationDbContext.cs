@@ -14,9 +14,10 @@ namespace HealthyHands.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
-
+        public DbSet<UserWorkout> UserWorkouts { get; set; }
+        public DbSet<UserWeight> UserWeights { get; set; }
         public DbSet<UserMeal> UserMeals { get; set; }
-        // public DbSet<UserDemographics> UserDemographics { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();

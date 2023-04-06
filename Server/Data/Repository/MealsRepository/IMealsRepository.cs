@@ -17,7 +17,7 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoWithAllMeals(string userId);
+        Task<UserDto> GetUserDtoWithAllMeals(string userId);
 
         /// <summary>
         /// Gets the user dto by meal date.
@@ -25,7 +25,7 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// <param name="userId">The user id.</param>
         /// <param name="mealDate">The meal date.</param>
         /// <returns>A <see cref="UserDto"/>.</returns>
-        UserDto GetUserDtoByMealDate(string userId, string mealDate);
+        Task<UserDto> GetUserDtoByMealDate(string userId, string mealDate);
 
         /// <summary>
         /// Gets the user meal by user meal id.
@@ -39,23 +39,23 @@ namespace HealthyHands.Server.Data.Repository.MealsRepository
         /// Adds the user meal.
         /// </summary>
         /// <param name="userMeal">The user meal.</param>
-        void AddUserMeal(UserMeal userMeal);
+        Task AddUserMeal(UserMeal userMeal);
 
         /// <summary>
         /// Updates the user meal.
         /// </summary>
         /// <param name="userMeal">The user meal.</param>
-        void UpdateUserMeal(UserMeal userMeal);
+        Task UpdateUserMeal(UserMeal userMeal);
 
         /// <summary>
         /// Deletes the user meal.
         /// </summary>
         /// <param name="userMealId">The user meal id.</param>
-        void DeleteUserMeal(string userMealId);
+        Task DeleteUserMeal(string userMealId);
 
         /// <summary>
         /// Saves changes to the <see cref="ApplicationDbContext"/>.
         /// </summary>
-        void Save();
+        Task Save();
     }
 }
