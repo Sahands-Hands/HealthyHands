@@ -25,13 +25,14 @@ namespace HealthyHands.Client.Pages
 
         public UserDto CurrentUser { get; set; } = new UserDto();
         public UserWeightDto UserWeight { get; set; } = new();
-
+        
 
         RadzenDataGrid<UserWeight> grid;
         RadzenChart chart;
         IEnumerable<UserWeight> weights;
         UserWeight weightToInsert;
         UserWeight weightToUpdate;
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -155,6 +156,9 @@ namespace HealthyHands.Client.Pages
                 grid.CancelEditRow(weight);
             }
         }
+
+    
+
     }
 
 }
