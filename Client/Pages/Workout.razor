@@ -1,0 +1,111 @@
+@page "/userworkouts"
+@using Radzen
+@using Radzen.Blazor
+
+<h3>Workouts</h3>
+
+<PageTitle>Workouts</PageTitle>
+@*
+<h1>Meals</h1>
+<label for="meal">Meal Name:</label>
+<input id="meal" type="text" @bind="newMealName" />
+
+<label for="mealDate">Date:</label>
+<input id="mealDate" type="date" @bind="newMealDate" />
+
+<label for="Calories">Calories:</label>
+<input id="Calories" type="number" @bind="newCalories" />
+
+<label for="Protein">Protein:</label>
+<input id="Protein" type="number" @bind="newProtein" />
+
+<label for="Carbs">Carbs:</label>
+<input id="Carbs" type="number" @bind="newCarbs" />
+
+<label for="Fat">Fat:</label>
+<input id="Fat" type="number" @bind="newFat" />
+
+<label for="Sugar">Sugar:</label>
+<input id="Sugar" type="number" @bind="newSugar" />
+
+<label for="meal">Add Meal:</label>
+<button @onclick="() => AddUserMeals() ">Add</button>*@
+@if (CurrentUser == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Workout" Click="@InsertRow" Disabled=@(workoutToInsert != null || workoutToUpdate != null) />
+    <RadzenDataGrid @ref="grid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@workouts" TItem="HealthyHands.Shared.Models.UserWorkout" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px">
+        <Columns>
+
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="WorkoutName" Title="Name" Frozen="true" Width="160px">
+                <EditTemplate Context="workout">
+                    <RadzenTextBox @bind-Value="workout.WorkoutName" Style="width:100%; display: block" Name="WorkoutName" />
+                    <RadzenRequiredValidator Text="WorkoutName is required" Component="WorkoutName" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="WorkoutDate" Title="Date" Width="120px">
+                <Template Context="workout">
+                    @String.Format("{0:d}", workout.WorkoutDate)
+                </Template>
+                <EditTemplate Context="workout">
+                    <RadzenDatePicker @bind-Value="workout.WorkoutDate"   Style="width:100%"  />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="WorkoutType" Title="Type" Width="120px">
+                <Template Context="workout">
+                    @WorkoutTypes.First(wt => wt.Value == workout.WorkoutType).Name
+                </Template>
+                <EditTemplate Context="workout">
+                    @* <RadzenDropDown @bind-Value="workout.WorkoutType" Data="@WorkoutTypes" Name="WorkoutTypes" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;" /> *@
+                    <RadzenDropDown @bind-Value="workout.WorkoutType" Data="@WorkoutTypes" Name="WorkoutTypes" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;"/>
+                    <RadzenRequiredValidator Text="WorkoutType is required" Component="WorkoutTypes" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="Intensity" Title="Intensity" Width="140px">
+                <Template Context="workout">
+                    @WorkoutIntensities.First(wi => wi.Value == workout.Intensity).Name
+                </Template>
+                <EditTemplate Context="workout">
+                    <RadzenDropDown @bind-Value="workout.Intensity" Data="@WorkoutIntensities" Name="Intensity" TextProperty="Name" ValueProperty="Value" Style="width:100%; display: block;"/>
+                    <RadzenRequiredValidator Text="Intensity is required" Component="Intensity" Popup="true"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="Length" Title="Length" Width="120px">
+                <EditTemplate Context="workout">
+                    <RadzenNumeric @bind-Value="workout.Length" Style="width:100%; display: block" Name="Length" />
+                    <RadzenRequiredValidator Text="Length is required" Component="Length" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Property="CaloriesBurned" Title="Calories" Width="120px">
+                <EditTemplate Context="workout">
+                    <RadzenNumeric @bind-Value="workout.CaloriesBurned" Style="width:100%; display: block" Name="Calories" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserWorkout" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="120px">
+                <Template Context="order">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(order))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(order))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="workout">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(workout))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(workout))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(workout))" >
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+        </Columns>
+
+    </RadzenDataGrid>
+
+}
