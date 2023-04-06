@@ -28,6 +28,7 @@ main {
         white-space: nowrap;
         margin-left: 1.5rem;
         text-decoration: none;
+       
     }
 
     .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
@@ -143,4 +144,5 @@ ul {
 
 li {
     margin-bottom: 0.5rem;
+     
 }

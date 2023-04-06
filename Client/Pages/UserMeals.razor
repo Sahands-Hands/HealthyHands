@@ -1,7 +1,8 @@
 ﻿@page "/usermeals"
 @using Radzen
 @using Radzen.Blazor
-
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Montserrat:700&display=swap" rel="stylesheet" >
+<link rel="stylesheet" href="/css/styles.css">
 <h3>Meals</h3>
 
 <PageTitle>Meals</PageTitle>
@@ -49,13 +50,13 @@ else
                     <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Fat" Title="Fat" Width="130px" >
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Fat" Title="Fat" Width="100px" >
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Fat" Style="width:100%; display: block" Name="Fat" />
                     <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Sugar" Title="Sugar" Width="140px" >
+            <RadzenDataGridColumn TItem="HealthyHands.Shared.Models.UserMeal" Property="Sugar" Title="Sugar" Width="120px" >
                 <EditTemplate Context="order">
                     <RadzenNumeric @bind-Value="order.Sugar" Style="width:100%; display: block" Name="Sugar" />
                     <RadzenRequiredValidator Text="MealName is required" Component="MealName" Popup="true" />
