@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using HealthyHands.Client.HttpRepository.MealHttpRepository;
+using Radzen;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IMealsHttpRepository, MealsHttpRepository>();
 builder.Services.AddScoped<IWorkoutsHttpRepository, WorkoutsHttpRepository>();
 builder.Services.AddScoped<IUserHttpRepository, UserHttpRepository>();
 builder.Services.AddScoped<IWeightHttpRepository, WeightHttpRepository>();
+
+builder.Services.AddScoped<TooltipService>();
 
 builder.Services.AddApiAuthorization();
 

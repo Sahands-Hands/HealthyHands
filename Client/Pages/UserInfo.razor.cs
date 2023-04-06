@@ -19,6 +19,10 @@ namespace HealthyHands.Client.Pages
         public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
         [Inject]
         IUserHttpRepository UserHttpRepository { get; set; }
+
+        [Inject] 
+        TooltipService TooltipServiceItem { get; set; }
+        
         public UserDto User { get; set; } = new();
 
         RadzenDataGrid<UserDto> grid;
@@ -77,8 +81,7 @@ namespace HealthyHands.Client.Pages
         private async Task FetchData()
         {
             User = await UserHttpRepository.GetUserInfo();
-
-            grid.Reload();
+            
         }
         private async Task OnUpdateRow(UserDto user)
         {
@@ -89,14 +92,13 @@ namespace HealthyHands.Client.Pages
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Height = user.Height,
-                Gender = selectedGender.Value,
-                ActivityLevel = selectedActivityLevel.Value,
+                BirthDay = user.BirthDay,
+                Gender = user.Gender,
+                ActivityLevel = user.ActivityLevel,
                 WeightGoal = user.WeightGoal,
-                CalorieGoal = user.CalorieGoal,
                 Id = user.Id
             };
             var result = await UserHttpRepository.UpdateUserInfo(userDto);
-            await FetchData();
         }
         async Task EditRow(UserDto user)
         {
@@ -122,5 +124,7 @@ namespace HealthyHands.Client.Pages
 
             warningMessage = "";
         }
+        
+        void ShowTooltip(ElementReference elementReference, TooltipOptions options = null) => TooltipServiceItem.Open(elementReference, "You can't edit your birthday", options);
     }
 }
