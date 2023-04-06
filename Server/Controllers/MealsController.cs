@@ -49,11 +49,6 @@ namespace HealthyHands.Server.Controllers
                 return BadRequest();
             }
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
             return Ok(user);
         }
 
