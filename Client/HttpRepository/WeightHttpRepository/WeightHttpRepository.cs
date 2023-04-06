@@ -1,5 +1,8 @@
 ﻿using HealthyHands.Shared.Models;
 using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text;
+using System.Text.Json;
 
 namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
 {
@@ -16,7 +19,9 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
         /// <returns></returns>
         public async Task<UserDto> GetWeights()
         {
-            var user = await _httpClient.GetFromJsonAsync<UserDto>("weights");
+            var responseMessage = await _httpClient.GetAsync("weights");
+            var content = await ValidateContent(responseMessage).ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<UserDto>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return user;
         }
 
@@ -76,6 +81,18 @@ namespace HealthyHands.Client.HttpRepository.WeightHttpRepository
             var response = await _httpClient.DeleteAsync($"weights/delete/{userWeightId}");
             return response.IsSuccessStatusCode;
 
+        }
+        
+        private HttpContent ValidateContent(HttpResponseMessage response)
+        {
+            if(string.IsNullOrEmpty(response.Content?.ReadAsStringAsync().Result))
+            {
+                return response.Content= new StringContent("null",Encoding.UTF8, MediaTypeNames.Application.Json);
+            }
+            else
+            {
+                return response.Content;
+            }
         }
 
     }

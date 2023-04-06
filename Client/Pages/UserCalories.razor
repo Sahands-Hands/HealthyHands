@@ -1,7 +1,7 @@
 ﻿@page "/usercalories"
 
  
-<title My page </title>
+<title> My page </title>
 
 
 @if (User == null)
@@ -29,5 +29,7 @@ else
         <br>
         <h3 style="text-align: center;">@Message</h3>
         <h3 style="text-align: center;">@CalorieMessage</h3>
+        <h4>@User.UserWeights.Count</h4>
+        <h4>@UserInfo.Id</h4>
     </div>
 }

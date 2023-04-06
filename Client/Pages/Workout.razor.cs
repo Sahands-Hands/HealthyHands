@@ -58,7 +58,7 @@ namespace HealthyHands.Client.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        public UserDto CurrentUser { get; set; }
+        public UserDto CurrentUser { get; set; } = new();
         public UserWorkoutDto UserWorkout { get; set; } = new();
 
         // 0 -> Bicycling
@@ -147,7 +147,8 @@ namespace HealthyHands.Client.Pages
         private async Task OnCreateRow(UserWorkout workout)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            // var userId = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userId = authState.User.Identity.Name;
 
             var userWorkoutDto = new UserWorkoutDto
             {
@@ -157,7 +158,7 @@ namespace HealthyHands.Client.Pages
                 Length = workout.Length,
                 WorkoutDate = workout.WorkoutDate,
                 CaloriesBurned = workout.CaloriesBurned ?? 0, // change to calories burned
-                ApplicationUserId = workout.ApplicationUserId
+                ApplicationUserId = userId
             };
 
             var result = await WorkoutsHttpRepository.AddUserWorkout(userWorkoutDto);
@@ -171,10 +172,9 @@ namespace HealthyHands.Client.Pages
             newCaloriesBurned = 0;
 
 
-        
+            
             StateHasChanged();
 
-            
             workoutToInsert = null;
         }
 
@@ -200,6 +200,7 @@ namespace HealthyHands.Client.Pages
             };
 
             var result = await WorkoutsHttpRepository.UpdateWorkouts(userWorkout);
+            await FetchData();
 
         }
 

@@ -1,5 +1,8 @@
 ﻿using HealthyHands.Shared.Models;
 using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text;
+using System.Text.Json;
 using HealthyHands.Client.HttpRepository.WorkoutsRepository;
 
 namespace HealthyHands.Client.HttpRepository.WorkoutsHttpRepository
@@ -15,7 +18,9 @@ namespace HealthyHands.Client.HttpRepository.WorkoutsHttpRepository
         
 		public async Task<UserDto> GetWorkouts()
 		{
-			var user = await _httpClient.GetFromJsonAsync<UserDto>("workouts");
+			var responseMessage = await _httpClient.GetAsync("workouts");
+			var content = await ValidateContent(responseMessage).ReadAsStringAsync();
+			var user = JsonSerializer.Deserialize<UserDto>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 			return user;
 		}
 		
@@ -41,6 +46,18 @@ namespace HealthyHands.Client.HttpRepository.WorkoutsHttpRepository
 		{
 			var response = await _httpClient.DeleteAsync($"workouts/delete/{userWorkoutId}");
 			return response.IsSuccessStatusCode;
+		}
+		
+		private HttpContent ValidateContent(HttpResponseMessage response)
+		{
+			if(string.IsNullOrEmpty(response.Content?.ReadAsStringAsync().Result))
+			{
+				return response.Content= new StringContent("null",Encoding.UTF8, MediaTypeNames.Application.Json);
+			}
+			else
+			{
+				return response.Content;
+			}
 		}
     }
 }

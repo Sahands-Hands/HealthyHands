@@ -21,14 +21,16 @@ namespace HealthyHands.Server.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         /// <summary>
         /// UserController Constructor.
         /// </summary>
         /// <param name="userRepository"> <see cref="UserRepository"/></param>
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
         {
             _userRepository = userRepository;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> UserInfo()
         {
             var userDto = new UserDto();
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
 
             try
             {
@@ -50,11 +52,6 @@ namespace HealthyHands.Server.Controllers
             catch
             {
                 return BadRequest(userDto);
-            }
-
-            if (userDto == null)
-            {
-                return NotFound(userDto);
             }
 
             return Ok(userDto);
@@ -70,7 +67,7 @@ namespace HealthyHands.Server.Controllers
         [Route("update")]
         public async Task<ActionResult> UpdateUserInfo([FromBody] UserDto userDto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
             if (userId != userDto.Id)
             {
                 return Forbid();

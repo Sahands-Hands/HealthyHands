@@ -20,14 +20,16 @@ namespace HealthyHands.Server.Controllers
     public class WeightsController : Controller
     {
         private readonly IWeightsRepository _weightsRepository;
-
+        private readonly UserManager<ApplicationUser> _userManager;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="WeightsController"/> class.
         /// </summary>
         /// <param name="weightsRepository">The weights repository.</param>
-        public WeightsController(IWeightsRepository weightsRepository)
+        public WeightsController(IWeightsRepository weightsRepository, UserManager<ApplicationUser> userManager)
         {
             _weightsRepository = weightsRepository;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> GetWeights()
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
             try
             {
                 user = await _weightsRepository.GetUserDtoWithAllWeights(userId);
@@ -62,7 +64,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> GetByWeightDate(string date)
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
 
             try
             {
@@ -95,7 +97,7 @@ namespace HealthyHands.Server.Controllers
                 UserWeightId = Guid.NewGuid().ToString(),
                 Weight = userWeightDto.Weight,
                 WeightDate = userWeightDto.WeightDate,
-                ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ApplicationUserId = _userManager.GetUserAsync(User).Result.Id
             };
 
             try
@@ -120,7 +122,7 @@ namespace HealthyHands.Server.Controllers
         [Route("update")]
         public async Task<ActionResult> UpdateWeight([FromBody] UserWeightDto weightDto)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
             if (weightDto.ApplicationUserId != userId)
             {
                 return NotFound();
@@ -157,7 +159,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult> DeleteWeight(string userWeightId)
         {
             UserWeight weightToDelete = _weightsRepository.GetUserWeightByUserWeightId(userWeightId);
-            if (weightToDelete == null || weightToDelete.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (weightToDelete == null || weightToDelete.ApplicationUserId != _userManager.GetUserAsync(User).Result.Id)
             {
                 return NotFound();
             }
@@ -182,6 +184,7 @@ namespace HealthyHands.Server.Controllers
         protected override void Dispose(bool disposing)
         {
             _weightsRepository.Dispose();
+            _userManager.Dispose();
             base.Dispose(disposing);
         }
     }

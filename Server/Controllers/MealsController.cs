@@ -20,14 +20,16 @@ namespace HealthyHands.Server.Controllers
     public class MealsController : Controller
     {
         private readonly IMealsRepository _mealsRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MealsController"/> class.
         /// </summary>
         /// <param name="mealsRepository">The meals repository.</param>
-        public MealsController(IMealsRepository mealsRepository)
+        public MealsController(IMealsRepository mealsRepository, UserManager<ApplicationUser> userManager)
         {
             _mealsRepository = mealsRepository;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> GetMeals()
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
             try
             {
                 user = await _mealsRepository.GetUserDtoWithAllMeals(userId);
@@ -62,7 +64,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult<UserDto>> GetByMealDate(string date)
         {
             UserDto? user;
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
 
             try
             {
@@ -100,7 +102,7 @@ namespace HealthyHands.Server.Controllers
                 Carbs = userMealDto.Carbs,
                 Fat = userMealDto.Fat,
                 Sugar = userMealDto.Sugar,
-                ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ApplicationUserId = _userManager.GetUserAsync(User).Result.Id
             };
 
             try
@@ -125,7 +127,7 @@ namespace HealthyHands.Server.Controllers
         [Route("update")]
         public async Task<ActionResult> UpdateMeal([FromBody] UserMealDto mealDto)
         { 
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _userManager.GetUserAsync(User).Result.Id;
             if (mealDto.ApplicationUserId != userId)
             {
                 return NotFound();
@@ -167,7 +169,7 @@ namespace HealthyHands.Server.Controllers
         public async Task<ActionResult> DeleteMeal(string userMealId)
         {
             UserMeal mealToDelete = _mealsRepository.GetUserMealByUserMealId(userMealId);
-            if (mealToDelete == null || mealToDelete.ApplicationUserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (mealToDelete == null || mealToDelete.ApplicationUserId != _userManager.GetUserAsync(User).Result.Id)
             {
                 return NotFound();
             }
@@ -192,6 +194,7 @@ namespace HealthyHands.Server.Controllers
         protected override void Dispose(bool disposing)
         {
             _mealsRepository.Dispose();
+            _userManager.Dispose();
             base.Dispose(disposing);
         }
     }

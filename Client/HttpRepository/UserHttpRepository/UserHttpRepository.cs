@@ -1,5 +1,9 @@
 ﻿using HealthyHands.Shared.Models;
 using System.Net.Http.Json;
+using System.Net.Mime;
+using System.Text;
+using System.Text.Json;
+
 namespace HealthyHands.Client.HttpRepository.UserRepository
 {
     public class UserHttpRepository : IUserHttpRepository
@@ -16,7 +20,9 @@ namespace HealthyHands.Client.HttpRepository.UserRepository
         /// <returns>UserDto object</returns>
         public async Task<UserDto> GetUserInfo()
         {
-            var user = await _httpClient.GetFromJsonAsync<UserDto>("user");
+            var responseMessage = await _httpClient.GetAsync("user");
+            var content = await ValidateContent(responseMessage).ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<UserDto>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return user;
         }
 
@@ -29,6 +35,18 @@ namespace HealthyHands.Client.HttpRepository.UserRepository
         {
             var response = await _httpClient.PutAsJsonAsync<UserDto>("user/update", userDto);
             return response.IsSuccessStatusCode;
+        }
+        
+        private HttpContent ValidateContent(HttpResponseMessage response)
+        {
+            if(string.IsNullOrEmpty(response.Content?.ReadAsStringAsync().Result))
+            {
+                return response.Content= new StringContent("null",Encoding.UTF8, MediaTypeNames.Application.Json);
+            }
+            else
+            {
+                return response.Content;
+            }
         }
     }
 }

@@ -50,7 +50,8 @@ namespace HealthyHands.Client.Pages
 
         public void CalculateCalories()
         {
-            int weightLength = User.UserWeights.Count;
+            int weightLength;
+            weightLength = User.UserWeights.Count;
             int gender = (int)UserInfo.Gender;
             double weight = User.UserWeights[weightLength-1].Weight;
             int height = (int)UserInfo.Height;
