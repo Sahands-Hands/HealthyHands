@@ -27,6 +27,7 @@ builder.Services.AddScoped<IWeightHttpRepository, WeightHttpRepository>();
 
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
 
 builder.Services.AddApiAuthorization();
 

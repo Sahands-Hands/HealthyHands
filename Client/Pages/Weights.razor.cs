@@ -156,9 +156,6 @@ namespace HealthyHands.Client.Pages
                 grid.CancelEditRow(weight);
             }
         }
-
-    
-
     }
 
 }
