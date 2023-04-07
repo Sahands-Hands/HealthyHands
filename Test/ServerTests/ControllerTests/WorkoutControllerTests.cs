@@ -18,6 +18,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
@@ -26,6 +27,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly ApplicationDbContext _context;
         private readonly WorkoutsRepository _repository;
         private readonly WorkoutsController _controller;
+        private readonly UserStore<ApplicationUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -39,6 +42,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
             _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new WorkoutsRepository(_context);
+            _userStore = new UserStore<ApplicationUser>(_context);
+            _userManager = new UserManager<ApplicationUser>(_userStore, null, null, null, null, null, null, null, null);
             _controller = new WorkoutsController(_repository, _userManager);
         }
 
@@ -71,8 +76,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserWorkouts.Add(workout1);
             newUser.UserWorkouts.Add(workout2);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -127,8 +131,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserWorkouts.Add(workout3);
             newUser.UserWorkouts.Add(workout4);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -157,7 +160,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         public async Task AddWorkout_ReturnsAddedWorkout()
         {
             // Arrange
-            var newUser = new ApplicationUser { Id = "add_user", UserName = "example name" };
+            var newUser = new ApplicationUser { Id = "add_user_workout", UserName = "example name" };
             var workout5 = new UserWorkoutDto
             {
                 UserWorkoutId = "Workout 5",
@@ -169,8 +172,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 CaloriesBurned = 777,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -201,7 +203,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         public async Task UpdateWorkout_UpdatesAddedWorkout()
         {
             // Arrange
-            var newUser = new ApplicationUser { Id = "update_user", UserName = "example name" };
+            var newUser = new ApplicationUser { Id = "update_user_workout", UserName = "example name" };
             var oldWorkout = new UserWorkoutDto
             {
                 UserWorkoutId = "Workout 6",
@@ -224,8 +226,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 CaloriesBurned = 999,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -264,7 +265,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         public async Task DeleteWorkout_DeletesAddedWorkout()
         {
             // Arrange
-            var newUser = new ApplicationUser { Id = "delete_user", UserName = "example name" };
+            var newUser = new ApplicationUser { Id = "delete_user_workout", UserName = "example name" };
             var deletableWorkout = new UserWorkoutDto
             {
                 UserWorkoutId = "Workout 7",
@@ -276,8 +277,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 CaloriesBurned = 111,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {

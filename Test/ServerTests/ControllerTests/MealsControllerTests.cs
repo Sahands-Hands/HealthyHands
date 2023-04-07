@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
     public class MealsControllerTests : IDisposable
@@ -26,6 +28,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly ApplicationDbContext _context;
         private readonly MealsRepository _repository;
         private readonly MealsController _controller;
+        private readonly UserStore<ApplicationUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -39,7 +43,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
             _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new MealsRepository(_context);
-            _userManager = new UserManager<ApplicationUser>;
+            _userStore = new UserStore<ApplicationUser>(_context);
+            _userManager = new UserManager<ApplicationUser>(_userStore, null, null, null, null, null, null, null, null);
             _controller = new MealsController(_repository, _userManager);
         }
 
@@ -74,8 +79,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserMeals.Add(meal1);
             newUser.UserMeals.Add(meal2);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -132,8 +136,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserMeals.Add(meal3);
             newUser.UserMeals.Add(meal4);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -175,8 +178,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 Sugar = 20,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -232,8 +234,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 Sugar = 20,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -285,8 +286,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 Sugar = 20,
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {

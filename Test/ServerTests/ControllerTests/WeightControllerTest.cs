@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Microsoft.AspNetCore.Identity;
 using HealthyHands.Server.Data;
 using HealthyHands.Server.Data.Repository.WeightsRepository;
 using HealthyHands.Server.Controllers;
@@ -17,7 +18,9 @@ using HealthyHands.Server.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+
 
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
@@ -26,6 +29,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly ApplicationDbContext _context;
         private readonly WeightsRepository _repository;
         private readonly WeightsController _controller;
+        private readonly UserStore<ApplicationUser> _userStore;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
         private readonly UserManager<ApplicationUser> _userManager;   
@@ -39,6 +44,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
             _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new WeightsRepository(_context);
+            _userStore = new UserStore<ApplicationUser>(_context);
+            _userManager = new UserManager<ApplicationUser>(_userStore, null, null, null, null, null, null, null, null);
             _controller = new WeightsController(_repository, _userManager);
         }
 
@@ -63,8 +70,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserWeights.Add(weight1);
             newUser.UserWeights.Add(weight2);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -111,8 +117,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             };
             newUser.UserWeights.Add(weight3);
             newUser.UserWeights.Add(weight4);
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -149,8 +154,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 WeightDate = new DateTime(2020, 3, 25),
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -196,8 +200,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 WeightDate = new DateTime(2020, 3, 27),
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -244,8 +247,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
                 WeightDate = new DateTime(2020, 3, 29),
                 ApplicationUserId = newUser.Id
             };
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(newUser);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
