@@ -67,7 +67,7 @@ namespace HealthyHands.Tests.ServerTests.DataTests
             await _context.SaveChangesAsync();
 
             // Act
-            var userDto = _repository.GetUserDtoWithAllMeals(user.Id);
+            var userDto = await _repository.GetUserDtoWithAllMeals(user.Id);
 
             // Assert
             Assert.NotNull(userDto);
@@ -114,7 +114,7 @@ namespace HealthyHands.Tests.ServerTests.DataTests
             await _context.SaveChangesAsync();
 
             // Act
-            var userDto = _repository.GetUserDtoByMealDate(user.Id, "2020-3-20");
+            var userDto = await _repository.GetUserDtoByMealDate(user.Id, "2020-3-20");
 
             // Assert
             Assert.NotNull(userDto);
