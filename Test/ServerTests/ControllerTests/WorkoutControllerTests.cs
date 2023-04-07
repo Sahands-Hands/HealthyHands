@@ -31,7 +31,6 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public WorkoutControllerTests()
         {

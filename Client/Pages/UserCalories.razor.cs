@@ -43,6 +43,8 @@ namespace HealthyHands.Client.Pages
                     CurrentUser = await UserHttpRepository.GetUserInfo();
                     var userWeightsDto = await WeightHttpRepository.GetWeights();
                     CurrentUserWeights = userWeightsDto.UserWeights;
+                    
+                    
                     if (CurrentUser.WeightGoal == 0)
                     {
                         SelectedGoal = 0;
@@ -56,23 +58,27 @@ namespace HealthyHands.Client.Pages
                         SelectedGoal = 2;
                         Goal = "gain";
                     }
-
-                    if (new List<int> { 0, 1, 2 }.Contains((int)CurrentUser.WeightGoal) &&
-                        CurrentUser.CalorieGoal == null)
+                    
+                    if (CurrentUser.WeightGoal is not null)
                     {
-                        CurrentUser.CalorieGoal = CalculateCalories();
-                        var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
-                        ShowSuccessNotification();
-                        await FetchData();
+                        if (new List<int> { 0, 1, 2 }.Contains((int)CurrentUser.WeightGoal) &&
+                                                CurrentUser.CalorieGoal == null)
+                                            {
+                                                CurrentUser.CalorieGoal = CalculateCalories();
+                                                var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
+                                                ShowSuccessNotification();
+                                                await FetchData();
+                                            }
+                        
+                                            if (CalculateCalories() != CurrentUser.CalorieGoal)
+                                            {
+                                                CurrentUser.CalorieGoal = CalculateCalories();
+                                                var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
+                                                ShowSuccessNotification();
+                                                await FetchData();
+                                            }
                     }
-
-                    if (CalculateCalories() != CurrentUser.CalorieGoal)
-                    {
-                        CurrentUser.CalorieGoal = CalculateCalories();
-                        var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
-                        ShowSuccessNotification();
-                        await FetchData();
-                    }
+                    
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
