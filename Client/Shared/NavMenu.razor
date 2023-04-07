@@ -11,26 +11,44 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link selected" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="usercalories">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Calories
+            <NavLink class="nav-link selected" href="usercalories">
+                <span class="oi oi-calculator" aria-hidden="true"></span> Calories
             </NavLink>
-            <NavLink class="nav-link" href="usermeals">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Meals
+            <NavLink class="nav-link selected" href="usermeals">
+                <span class="oi oi-heart" aria-hidden="true"></span> Meals
             </NavLink>
-            <NavLink class="nav-link" href="userworkouts">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Workouts
+            <NavLink class="nav-link selected" href="userworkouts">
+                <span class="oi oi-pulse" aria-hidden="true"></span> Workouts
             </NavLink>
-            <NavLink class="nav-link" href="userweights">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Weights
+            <NavLink class="nav-link selected" href="userweights">
+                <span class="oi oi-clipboard" aria-hidden="true"></span> Weights
             </NavLink>
+            <AuthorizeView Roles="User">
+                <Authorized>
+                    <NavLink class="nav-link selected" href="userinfo">
+                        <span class="oi oi-info" aria-hidden="true"></span> User Info
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <NavLink class="nav-link selected" href="userinfo">
+                        <span class="oi oi-info" aria-hidden="true"></span> User Info
+                    </NavLink>
+                    <NavLink class="nav-link selected" href="adminfeature">
+                        <span class="oi oi-key" aria-hidden="true"></span> Admin
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
         </div>
     </nav>
 </div>
+<style>
+
+</style>
 
 @code {
     private bool collapseNavMenu = true;

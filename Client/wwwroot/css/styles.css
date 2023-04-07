@@ -1,4 +1,4 @@
-﻿.rz-message {
+﻿/*.rz-message {
     display: inline-block;
     padding: 12px 20px;
     font-size: 14px;
@@ -10,8 +10,19 @@
     animation: pulse 1.5s;
     width: 100%;
     margin-top: 5px;
-}
+}*/
 
+.validation-message {
+    display: block;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 5px;
+    border: 1px solid red;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: red;
+}
 
 @keyframes pulse {
     0% {
@@ -39,7 +50,7 @@ h1, h2, h3 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     margin-top: 2rem;
-    color : blue;
+    color: #fc7b06;
 }
 
 p {

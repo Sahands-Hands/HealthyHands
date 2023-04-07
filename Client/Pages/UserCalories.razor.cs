@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
+using Radzen;
 
 namespace HealthyHands.Client.Pages
 {
@@ -14,19 +15,23 @@ namespace HealthyHands.Client.Pages
         [Inject] HttpRepository.UserRepository.IUserHttpRepository UserHttpRepository { get; set; }
 
         [Inject] NavigationManager NavigationManager { get; set; }
+        
+        [Inject] NotificationService NotificationService { get; set; }
 
 
 
 
 
-        public UserDto User { get; set; } = new();
-        public UserDto UserInfo { get; set; } = new();
-        public string Goal { get; set; } = "maintain";
+        public List<UserWeight> CurrentUserWeights { get; set; } = new List<UserWeight>();
+        public UserDto? CurrentUser { get; set; }
+        public string Goal { get; set; } = "none";
         public double Calories { get; set; }
         public int WeightObjective { get; set; }
         public string Message { get; set; } = "Awaiting Weight Goal";
         public string CalorieMessage { get; set; } = "";
         public string SaveMessage { get; set; } = "";
+        private int SelectedGoal { get; set; } = 4;
+        
 
         protected override async Task OnInitializedAsync()
         {
@@ -35,8 +40,39 @@ namespace HealthyHands.Client.Pages
             {
                 try
                 {
-                    User = await WeightHttpRepository.GetWeights();
-                    UserInfo = await UserHttpRepository.GetUserInfo();
+                    CurrentUser = await UserHttpRepository.GetUserInfo();
+                    var userWeightsDto = await WeightHttpRepository.GetWeights();
+                    CurrentUserWeights = userWeightsDto.UserWeights;
+                    if (CurrentUser.WeightGoal == 0)
+                    {
+                        SelectedGoal = 0;
+                        Goal = "lose";
+                    } else if (CurrentUser.WeightGoal == 1)
+                    {
+                        SelectedGoal = 1;
+                        Goal = "maintain";
+                    } else if (CurrentUser.WeightGoal == 2)
+                    {
+                        SelectedGoal = 2;
+                        Goal = "gain";
+                    }
+
+                    if (new List<int> { 0, 1, 2 }.Contains((int)CurrentUser.WeightGoal) &&
+                        CurrentUser.CalorieGoal == null)
+                    {
+                        CurrentUser.CalorieGoal = CalculateCalories();
+                        var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
+                        ShowSuccessNotification();
+                        await FetchData();
+                    }
+
+                    if (CalculateCalories() != CurrentUser.CalorieGoal)
+                    {
+                        CurrentUser.CalorieGoal = CalculateCalories();
+                        var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
+                        ShowSuccessNotification();
+                        await FetchData();
+                    }
                 }
                 catch (AccessTokenNotAvailableException exception)
                 {
@@ -47,131 +83,167 @@ namespace HealthyHands.Client.Pages
             {
                 NavigationManager.NavigateTo("/defaultusercalories");
             }
-            if((UserInfo.CalorieGoal != null && UserInfo.CalorieGoal != 0) && (UserInfo.WeightGoal != null))
-            {
-                Calories = (double)UserInfo.CalorieGoal;
-                WeightObjective = (int)UserInfo.WeightGoal;
-            }
-
-            if(WeightObjective == 0)
-            {
-                Message = "Your saved weight goal is to lose weight";
-                CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
-            }
-            else if(WeightObjective == 1)
-            {
-                Message = "Your saved weight goal is to maintain weight";
-                CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
-            }
-            else if (WeightObjective == 2)
-            {
-                Message = "Your saved weight goal is to gain weight";
-                CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
-            }
+            
+            // if(CurrentUser.CalorieGoal != null && CurrentUser is not { CalorieGoal: 0, WeightGoal: null })
+            // {
+            //     Calories = (double)CurrentUser.CalorieGoal;
+            //     WeightObjective = (int)CurrentUser.WeightGoal;
+            //     
+            //     
+            // }
+            //
+            // if(WeightObjective == 0)
+            // {
+            //     Goal = "lose";
+            //     Message = "Your saved weight goal is to lose weight";
+            //     CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
+            // }
+            // else if(WeightObjective == 1)
+            // {
+            //     Goal = "maintain";
+            //     Message = "Your saved weight goal is to maintain weight";
+            //     CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
+            // }
+            // else if (WeightObjective == 2)
+            // {
+            //     Goal = "gain";
+            //     Message = "Your saved weight goal is to gain weight";
+            //     CalorieMessage = $"Your saved daily calorie intake is {Calories} calories";
+            // }
 
         }
 
-        public bool CalculateCalories()
+        private async Task FetchData()
         {
-            int weightLength;
-            weightLength = User.UserWeights.Count;
-            if (weightLength > 0)
+            CurrentUser = await UserHttpRepository.GetUserInfo();
+            var userWeights = await WeightHttpRepository.GetWeights();
+            CurrentUserWeights = userWeights.UserWeights;
+            if (CurrentUser.WeightGoal == 0)
             {
-                int gender = (int)UserInfo.Gender;
-                double weight = User.UserWeights[weightLength - 1].Weight;
-                int height = (int)UserInfo.Height;
-                DateTime? birthDay = UserInfo.BirthDay;
-                int age = (int)GetAge(birthDay);
-                Calories = CalculateRecommendedCalories(gender, weight, height, age, Goal);
-                return true;
-            }
-            else
+                SelectedGoal = 0;
+                Goal = "lose";
+            } else if (CurrentUser.WeightGoal == 1)
             {
-                Message = "You have not added a weight, please add a weight";
-                CalorieMessage = "You can add a weight by going to the weights tab";
-                return false;
+                SelectedGoal = 1;
+                Goal = "maintain";
+            } else if (CurrentUser.WeightGoal == 2)
+            {
+                SelectedGoal = 2;
+                Goal = "gain";
             }
         }
 
-        public void MaintainWeight()
+        private void ChangeSelectedGoal(int selected)
         {
-            WeightObjective = 1;
-            Goal = "maintain";
-            if (CalculateCalories())
-            {
-                Message = $"Your desired goal is to {Goal} weight";
-                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
-            }
-        }
-        public void GainWeight()
-        {
-            WeightObjective = 2;
-            Goal = "gain";
-            if (CalculateCalories())
-            {
-                Message = $"Your desired goal is to {Goal} weight";
-                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
-            }
-        }
-        public void LoseWeight()
-        {
-            WeightObjective = 0;
-            Goal = "lose";
-            if (CalculateCalories())
-            {
-                Message = $"Your desired goal is to {Goal} weight";
-                CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
-            }
+            SelectedGoal = selected;
         }
 
-        public async void SaveCalories()
+        private int CalculateCalories()
         {
-            int calorieGoal = (int)(Math.Round(Calories, MidpointRounding.AwayFromZero));
-            var tempUserDto = new UserDto()
-            {
-                Id = UserInfo.Id,
-                UserName = UserInfo.UserName,
-                FirstName = UserInfo.FirstName,
-                LastName = UserInfo.LastName,
-                Height = UserInfo.Height,
-                Gender = UserInfo.Gender,
-                ActivityLevel = UserInfo.ActivityLevel,
-                WeightGoal = WeightObjective,
-                CalorieGoal = calorieGoal,
-                BirthDay = UserInfo.BirthDay,
-                LockoutEnabled = UserInfo.LockoutEnabled,
-                IsAdmin = UserInfo.IsAdmin,
-                UserMeals = UserInfo.UserMeals,
-                UserWeights = UserInfo.UserWeights,
-                UserWorkouts = UserInfo.UserWorkouts
-            };
-            var updated = false;
-            if(Calories != 0)
-            {
-                updated = await UserHttpRepository.UpdateUserInfo(tempUserDto);
-            }
-            if (updated)
-            {
-                SaveMessage = "The calorie goal has been saved succesfully";
-            }
-            else
-            {
-                SaveMessage = "There was trouble updating the user please try again";
-            }
+            var gender = CurrentUser.Gender ?? 0;
+            var weight = CurrentUserWeights.Last().Weight;
+            var height = CurrentUser.Height ?? 0;
+            var birthDay = CurrentUser.BirthDay;
+            var age = GetAge(birthDay) ?? 20;
+            return Convert.ToInt32(CalculateRecommendedCalories(gender, weight, height, age)) ;
         }
 
-        private double CalculateRecommendedCalories(int gender, double weight, int height, int age, string goal)
+        // public void MaintainWeight()
+        // {
+        //     WeightObjective = 1;
+        //     Goal = "maintain";
+        //     
+        //     if (CalculateCalories())
+        //     {
+        //         Message = $"Your desired goal is to {Goal} weight";
+        //         CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        //     }
+        // }
+        // public void GainWeight()
+        // {
+        //     WeightObjective = 2;
+        //     Goal = "gain";
+        //     if (CalculateCalories())
+        //     {
+        //         Message = $"Your desired goal is to {Goal} weight";
+        //         CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        //     }
+        // }
+        // public void LoseWeight()
+        // {
+        //     WeightObjective = 0;
+        //     Goal = "lose";
+        //     if (CalculateCalories())
+        //     {
+        //         Message = $"Your desired goal is to {Goal}</style> weight";
+        //         CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
+        //     }
+        // }
+
+        private async Task OnUpdate()
+        {
+            CurrentUser.CalorieGoal = CalculateCalories();
+            CurrentUser.WeightGoal = SelectedGoal;
+            var result = await UserHttpRepository.UpdateUserInfo(CurrentUser);
+            ShowSuccessNotification();
+            await FetchData();
+            
+        }
+        
+        void ShowSuccessNotification()
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Success Summary", Detail = "Success Detail", Duration = 4000 });
+        }
+
+        // public async void SaveCalories()
+        // {
+        //     int calorieGoal = (int)(Math.Round(Calories, MidpointRounding.AwayFromZero));
+        //     var tempUserDto = new UserDto()
+        //     {
+        //         Id = UserInfo.Id,
+        //         UserName = UserInfo.UserName,
+        //         FirstName = UserInfo.FirstName,
+        //         LastName = UserInfo.LastName,
+        //         Height = UserInfo.Height,
+        //         Gender = UserInfo.Gender,
+        //         ActivityLevel = UserInfo.ActivityLevel,
+        //         WeightGoal = WeightObjective,
+        //         CalorieGoal = calorieGoal,
+        //         BirthDay = UserInfo.BirthDay,
+        //         LockoutEnabled = UserInfo.LockoutEnabled,
+        //         IsAdmin = UserInfo.IsAdmin,
+        //         UserMeals = UserInfo.UserMeals,
+        //         UserWeights = UserInfo.UserWeights,
+        //         UserWorkouts = UserInfo.UserWorkouts
+        //     };
+        //     var updated = false;
+        //     if(Calories != 0)
+        //     {
+        //         updated = await UserHttpRepository.UpdateUserInfo(tempUserDto);
+        //     }
+        //     if (updated)
+        //     {
+        //         SaveMessage = "The calorie goal has been saved succesfully";
+        //         await FetchData();
+        //     }
+        //     else
+        //     {
+        //         SaveMessage = "There was trouble updating the user please try again";
+        //     }
+        // }
+
+        private double CalculateRecommendedCalories(int gender, double weight, int height, int age)
         {
             double heightCm = height * 2.54;
             double weightKg = weight * 0.453;
             double calorieModifier = 1.0;
-
+            Console.WriteLine("Selected Goal: {0}", SelectedGoal);
             // Determine the calorie modifier based on the goal
-            if (goal.Equals("lose"))
+            if (SelectedGoal == 0)
             {
                 calorieModifier = 0.9; // Reduce calorie intake by 10% for weight loss
             }
-            else if (goal.Equals("gain"))
+            else if (SelectedGoal == 2)
             {
                 calorieModifier = 1.1; // Increase calorie intake by 10% for weight gain
             }

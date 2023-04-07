@@ -182,8 +182,8 @@ namespace HealthyHands.Tests.ServerTests.DataTests
             };
 
             // Act
-             _repository.AddUserMeal(newMeal);
-             _repository.Save();
+             await _repository.AddUserMeal(newMeal);
+             await _repository.Save();
             var addedMeal = _repository.GetUserMealByUserMealId("addable");
 
             // Assert
@@ -208,8 +208,8 @@ namespace HealthyHands.Tests.ServerTests.DataTests
                 ApplicationUserId = "testuser"
             };
 
-            _repository.AddUserMeal(newMeal);
-            _repository.Save();
+            await _repository.AddUserMeal(newMeal);
+            await _repository.Save();
             var oldMeal = _repository.GetUserMealByUserMealId("updatable");
             var oldId = oldMeal.UserMealId;
             var oldName = oldMeal.MealName;
@@ -229,8 +229,8 @@ namespace HealthyHands.Tests.ServerTests.DataTests
             };
 
             // Act
-            _repository.UpdateUserMeal(updatedMeal);
-            _repository.Save();
+            await _repository.UpdateUserMeal(updatedMeal);
+            await _repository.Save();
             var updated = _repository.GetUserMealByUserMealId("updatable");
 
             // Assert
@@ -259,13 +259,13 @@ namespace HealthyHands.Tests.ServerTests.DataTests
                 ApplicationUserId = "testuser"
             };
 
-            _repository.AddUserMeal(newMeal);
-            _repository.Save();
+            await _repository.AddUserMeal(newMeal);
+            await _repository.Save();
             var deletableMeal = _repository.GetUserMealByUserMealId("deletable");
 
             // Act
-            _repository.DeleteUserMeal(deletableMeal.UserMealId);
-            _repository.Save();
+            await _repository.DeleteUserMeal(deletableMeal.UserMealId);
+            await _repository.Save();
             var afterDeleting = _repository.GetUserMealByUserMealId(deletableMeal.UserMealId);
 
             // Assert

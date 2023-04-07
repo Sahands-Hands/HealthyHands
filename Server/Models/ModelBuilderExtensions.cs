@@ -36,8 +36,6 @@ namespace HealthyHands.Server.Models
                     Height = 72,
                     Gender = 1,
                     ActivityLevel = 1,
-                    WeightGoal = 2,
-                    CalorieGoal = 4000,
                     BirthDay = DateTime.Now
                 },
                 new ApplicationUser {
@@ -51,8 +49,6 @@ namespace HealthyHands.Server.Models
                     Height = 68,
                     Gender = 0,
                     ActivityLevel = 3,
-                    WeightGoal = 2,
-                    CalorieGoal = 3000,
                     BirthDay = DateTime.Now
                 },
                 new ApplicationUser {
@@ -62,7 +58,11 @@ namespace HealthyHands.Server.Models
                     NormalizedEmail = AdminUserName.ToUpper(),
                     EmailConfirmed = true,
                     FirstName = "Admin",
-                    LastName = "User"
+                    LastName = "User",
+                    Height = 68,
+                    Gender = 0,
+                    ActivityLevel = 3,
+                    BirthDay = DateTime.Parse("2023 - 03 - 21T10: 48:11.8147256")
                 }
             }; builder.Entity<ApplicationUser>().HasData(users);
 

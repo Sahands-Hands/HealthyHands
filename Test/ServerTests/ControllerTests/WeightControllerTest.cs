@@ -19,6 +19,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
@@ -31,6 +33,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+        private readonly UserManager<ApplicationUser> _userManager;   
 
         public WeightControllerTests()
         {
