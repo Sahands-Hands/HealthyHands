@@ -17,6 +17,7 @@ using HealthyHands.Server.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
@@ -27,6 +28,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly WorkoutsController _controller;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public WorkoutControllerTests()
         {
@@ -37,7 +39,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
             _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new WorkoutsRepository(_context);
-            _controller = new WorkoutsController(_repository);
+            _controller = new WorkoutsController(_repository, _userManager);
         }
 
         [Fact]

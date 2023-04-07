@@ -119,7 +119,7 @@ namespace HealthyHands.Client.Pages
             Goal = "lose";
             if (CalculateCalories())
             {
-                Message = $"Your desired goal is to {Goal} weight";
+                Message = $"Your desired goal is to {Goal}</style> weight";
                 CalorieMessage = $"To meet your goal, your recommended daily calorie intake is {Calories}";
             }
         }

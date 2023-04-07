@@ -17,6 +17,7 @@ using HealthyHands.Server.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace HealthyHands.Tests.ServerTests.ControllerTests
 {
@@ -27,6 +28,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
         private readonly MealsController _controller;
         private readonly DbContextOptions<ApplicationDbContext> _options;
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public MealsControllerTests()
         {
@@ -37,7 +39,8 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             _operationalStoreOptions = Options.Create(new OperationalStoreOptions());
             _context = new ApplicationDbContext(_options, _operationalStoreOptions);
             _repository = new MealsRepository(_context);
-            _controller = new MealsController(_repository);
+            _userManager = new UserManager<ApplicationUser>;
+            _controller = new MealsController(_repository, _userManager);
         }
 
         [Fact]
@@ -195,7 +198,7 @@ namespace HealthyHands.Tests.ServerTests.ControllerTests
             Assert.NotNull(result.Value);
             Assert.IsType<OkResult>(okResult);
             Assert.NotNull(userDto);
-            Assert.Equal(1, userDto.UserMeals.Count);
+            Assert.Single(userDto.UserMeals);
             Assert.Equal(meal5.Calories, userDto.UserMeals.ElementAt<UserMeal>(0).Calories);
             Assert.Equal(meal5.MealName, userDto.UserMeals.ElementAt<UserMeal>(0).MealName);
         }
